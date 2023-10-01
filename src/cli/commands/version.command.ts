@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { Command } from './command.interface.js';
 import chalk from 'chalk';
+import { StatusMessage } from '../../shared/helpers/const.js';
 
 type PackageJSONConfig = {
   version: string;
@@ -26,7 +27,7 @@ export class VersionCommand implements Command {
     const importedContent: unknown = JSON.parse(jsonContent);
 
     if (! isPackageJSONConfig(importedContent)) {
-      throw new Error(chalk.red('Failed to parse json content.'));
+      throw new Error(chalk.red(StatusMessage.FALILED_PARSE));
     }
 
     return importedContent.version;
@@ -41,7 +42,7 @@ export class VersionCommand implements Command {
       const version = this.readVersion();
       console.info(chalk.blue(version));
     } catch (error: unknown) {
-      console.error(chalk.red(`Failed to read version from ${this.filePath}`));
+      console.error(chalk.red(`${StatusMessage.FALILED_READ} ${this.filePath}`));
 
       if (error instanceof Error) {
         console.error(chalk.red(error.message));

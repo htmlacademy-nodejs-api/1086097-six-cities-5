@@ -42,3 +42,17 @@ export type Offer = {
   commentsCount: number;
   coords: Coords;
 }
+
+export type MockServerData = {
+  categories: string[];
+  titles: string[];
+  descriptions: string[];
+  city: string[];
+  imagePreview: string[];
+  images: string[];
+  premium: string[];
+  favourite: string[];
+  apartmentType: string[];
+  comfort: string[];
+  author: string[];
+}
