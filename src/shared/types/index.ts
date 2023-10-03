@@ -1,3 +1,4 @@
+export * from './component.enum.js';
 
 export type UserType = {
   pro: boolean;
