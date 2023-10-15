@@ -1,0 +1,678 @@
+openapi: 3.0.0
+info:
+  title: API сервер для демо-проекта Шесть городов
+  description: Список ресурсов и маршрутов сервера Шесть городов
+  license:
+    name: MIT
+    url: https://opensource.org/locense/MIT
+  version: "1.0.0"
+tags:
+  - name: offers
+    description: Действия с предложениями.
+  - name: reviews
+    description: Действия с комментариями.
+  - name: users
+    description: Действия с пользователями.
+
+paths:
+  /six-cities/register:
+    post:
+      tags:
+       -  users
+      summary: Регистрация пользователя
+      description: Регистрирует нового пользователя.
+
+      requestBody:
+        description: Информация для создания нового пользователя
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/createUser'
+        required: true
+
+      responses:
+        "201":
+          description: Пользователь зарегистрирован. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+        "400":
+          description: Неправильные регистрационные данные
+
+        "409":
+          description: Пользователь с таким email уже существует.
+
+  /six-cities/login:
+   post:
+      tags:
+       -  users
+      summary: Авторизация пользователя
+      description: Авторизует пользователя на основе логина и пароля.
+
+      requestBody:
+        description: Информация для авторизации существующего пользователя
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/authUser'
+        required: true
+
+      responses:
+        "200":
+          description: Пользователь авторизован. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+        "400":
+          description: Неправильный логин или пароль.
+
+   get:
+      tags:
+       -  users
+      summary: Проверка состояния пользователя
+      description: Возвращает информацию по авторизованному пользователю.
+
+      responses:
+        "200":
+          description: Пользователь авторизован. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user'
+
+        "401":
+          description: Пользователь не авторизован.
+
+  /six-cities/logout:
+   delete:
+      tags:
+       -  users
+      summary: Завершить сеанс пользователя
+      description: Завершает сеанс работы - выход из закрытой части приложения.
+
+      responses:
+        "204":
+          description: Сеанс завершен.
+
+  /six-cities/offers/createOffer:
+    post:
+      tags:
+        - offers
+      summary: Создать предложение
+      description: Создает новое предложение от авторизованного пользователя.
+
+      requestBody:
+        description: Информация для создания нового предложения
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/createOffer'
+        required: true
+
+      responses:
+        "201":
+          description: Предложение создано. Объект предложения.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offer'
+
+        "400":
+          description: Неправильные данные по предложению
+
+        "401":
+          description: Создание предложения возможно только для зарегистрированных пользователей.
+
+  /six-cities/offers/{offerId}/update:
+    post:
+      tags:
+        - offers
+      summary: Редактировать предложение
+      description: Изменяет существующее предложение от авторизованного пользователя.
+
+      parameters:
+        - name: offerId
+          in: path
+          schema:
+            type: string
+          required: true
+
+      requestBody:
+        description: Информация для обновления предложения
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/createOffer'
+        required: true
+
+      responses:
+        "201":
+          description: Предложение обновлено. Объект предложения.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offer'
+
+        "400":
+          description: Неправильные данные по предложению
+
+        "401":
+          description: Обновление предложения возможно только для зарегистрированных пользователей.
+
+  /six-cities/offers/{offerId}/delete:
+    delete:
+      tags:
+        - offers
+      summary: Удалить предложение
+      description: Удаляет существующее предложение от авторизованного пользователя.
+
+      parameters:
+        - name: offerId
+          in: path
+          schema:
+            type: string
+          required: true
+
+      responses:
+        "204":
+          description: Предложение удалено.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offer'
+
+        "401":
+          description: Удаление предложения возможно только для зарегистрированных пользователей.
+
+        "404":
+          description: Запрашиваемые данные не найдены
+
+  /six-cities/offers:
+    get:
+      tags:
+        - offers
+      summary: Получить список предложений
+      description: Возвращает массив предложений. Каждое предложение описано в виде объекта.
+
+      parameters:
+        - name: quantityOffer
+          in: path
+          schema:
+            type: number
+          required: true
+
+      responses:
+        "200":
+          description: Массив предложений.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offers'
+
+        "404":
+          description: Запрашиваемые данные не найдены
+
+  /six-cities/offers{offerId}:
+    get:
+      tags:
+        - offers
+      summary: Получить предложение
+      description: Возвращает предложение с идентификатором offerId
+
+      parameters:
+        - name: offerId
+          in: path
+          schema:
+            type: string
+          required: true
+
+      responses:
+        "200":
+          description: Объект предложения.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offer'
+
+        "404":
+          description: Предложение не найдено
+
+  /six-cities/favorite:
+    get:
+      tags:
+        - offers
+      summary: Получить список избранных предложений
+      description: Возвращает массив предложений, добавленных в избранное.
+
+      responses:
+        "200":
+          description: Массив предложений.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offers'
+
+        "401":
+          description: Просмотр избранных предложений возможен только для зарегистрированных пользователей.
+
+  /six-cities/favorite/{offerId}/{status}:
+    post:
+      tags:
+        - offers
+      summary: Изменить статус избранного предложения
+      description: Возвращает предложение с идентификатором offerId с актуальным состоянием поля isFavorite.
+
+      parameters:
+        - name: offerId
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: status
+          in: path
+          schema:
+            type: number
+          required: true
+
+      responses:
+        "200":
+          description: Объект предложения.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offer'
+
+        "201":
+          description: Объект предложения.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offer'
+
+        "400":
+          description: Ошибка тела запроса.
+
+        "401":
+          description: Пользователь не авторизован.
+
+        "404":
+          description: Предложение не найдено.
+
+        "409":
+          description: Приложение уже добавлено в избранное.
+
+  /six-cities/reviews/{offerId}:
+    get:
+      tags:
+        - reviews
+
+      summary: Получить список комментариев
+      description: Возвращает список комментариев для предложения с идентификатором offerId.
+
+      parameters:
+        - name: offerId
+          in: path
+          schema:
+            type: string
+          required: true
+
+      responses:
+        "200":
+          description: Массив комментариев.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/reviews'
+
+        "404":
+          description: Предложение не найдено
+
+    post:
+      tags:
+        - reviews
+
+      summary: Добавить новый комментарий
+      description: Добавляет новый комментарий для предложения с идентификатором offerId.
+
+      parameters:
+        - name: offerId
+          in: path
+          schema:
+            type: string
+          required: true
+
+      responses:
+        "200":
+          description: Объект с новым комментарием.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/review'
+
+        "400":
+          description: Ошибка тела запроса
+
+        "401":
+          description: Пользователь не авторизован
+
+        "404":
+          description: Предложение не найдено
+
+components:
+  schemas:
+    createUser:
+     type: object
+
+     properties:
+        username:
+          type: string
+          example: John
+
+        email:
+          type: string
+          example: mail@mail.com
+
+        avatar:
+          type: string
+          example: avatar.jpg
+
+        password:
+          type: string
+          example: 123456
+
+        isPro:
+         type: boolean
+         example: false
+
+    user:
+     type: object
+
+     properties:
+        username:
+          type: string
+          example: John
+
+        email:
+          type: string
+          example: mail@mail.com
+
+        avatar:
+          type: string
+          example: avatar.jpg
+
+        isPro:
+         type: boolean
+         example: false
+
+        token:
+          type: string
+          example: T2xpdmVyLmNvbm5lckBnbWFpbC5jb20=
+
+    authUser:
+     type: object
+
+     properties:
+        email:
+          type: string
+          example: mail@mail.com
+
+        password:
+          type: string
+          example: 123456
+
+    createOffer:
+     type: object
+
+     properties:
+        title:
+          type: string
+          example: Nice, cozy, warm big bed apartment
+        description:
+          type: string
+          example: 'I am happy to welcome you to my apartment in the city center! Three words: location, cosy and chic!'
+        date:
+          type: string
+          example: ISODate('2023-10-04T19:37:06.828Z')
+        city:
+          type: object
+          example:
+            name:
+            type: string
+            example: Brussels
+            location:
+              type: object
+              example:
+                latitude:
+                  type: number
+                  example: 50.846557
+                longitude:
+                  type: number
+                  example: 4.351697
+                zoom:
+                  type: number
+                  example: 13
+        imagePreview:
+          type: string
+          example: image-9.jpg
+        images:
+          type: array
+          example:  ['image-9.jpg','image-8.jpg','image-5.jpg','image-6.jpg','image-7.jpg','image-12.jpg']
+        isPremium:
+          type: boolean
+          example: false
+        isFavorite:
+          type: boolean
+          example: false
+        rating:
+          type: number
+          example: 3.2
+        type:
+          type: string
+          example: room
+        bedrooms:
+          type: number
+          example: 3
+        maxAdults:
+          type: number
+          example: 3
+        price:
+          type: number
+          example: 52866
+        goods:
+          type: array
+          example: ['Washer','Towels','Fridge']
+        hostId:
+          type: string
+          example: 65245ce712734e5eb67b7410
+        location:
+          type: object
+          example:
+            latitude:
+              type: number
+              example: 50.934361
+            longitude:
+              type: number
+              example: 6.943974
+            zoom:
+              type: number
+              example: 16
+
+    offer:
+     type: object
+
+     properties:
+        title:
+          type: string
+          example: Nice, cozy, warm big bed apartment
+        description:
+          type: string
+          example: 'I am happy to welcome you to my apartment in the city center! Three words: location, cosy and chic!'
+        date:
+          type: string
+          example: ISODate('2023-10-04T19:37:06.828Z')
+        city:
+          type: object
+          example:
+            name:
+            type: string
+            example: Brussels
+            location:
+              type: object
+              example:
+                latitude:
+                  type: number
+                  example: 50.846557
+                longitude:
+                  type: number
+                  example: 4.351697
+                zoom:
+                  type: number
+                  example: 13
+        imagePreview:
+          type: string
+          example: image-9.jpg
+        images:
+          type: array
+          example:  ['image-9.jpg','image-8.jpg','image-5.jpg','image-6.jpg','image-7.jpg','image-12.jpg']
+        isPremium:
+          type: boolean
+          example: false
+        isFavorite:
+          type: boolean
+          example: false
+        rating:
+          type: number
+          example: 3.2
+        type:
+          type: string
+          example: room
+        bedrooms:
+          type: number
+          example: 3
+        maxAdults:
+          type: number
+          example: 3
+        price:
+          type: number
+          example: 52866
+        goods:
+          type: array
+          example: ['Washer','Towels','Fridge']
+        hostId:
+          type: string
+          example: 65245ce712734e5eb67b7410
+        reviewCount:
+          type: number
+          example: 1
+        location:
+          type: object
+          example:
+            latitude:
+              type: number
+              example: 50.934361
+            longitude:
+              type: number
+              example: 6.943974
+            zoom:
+              type: number
+              example: 16
+
+    offers:
+     type: array
+
+     properties:
+        title:
+          type: string
+          example: Nice, cozy, warm big bed apartment
+        date:
+          type: string
+          example: ISODate('2023-10-04T19:37:06.828Z')
+        city:
+          type: object
+          example:
+            name:
+            type: string
+            example: Brussels
+            location:
+              type: object
+              example:
+                latitude:
+                  type: number
+                  example: 50.846557
+                longitude:
+                  type: number
+                  example: 4.351697
+                zoom:
+                  type: number
+                  example: 13
+        imagePreview:
+          type: string
+          example: image-9.jpg
+        isPremium:
+          type: boolean
+          example: false
+        isFavorite:
+          type: boolean
+          example: false
+        rating:
+          type: number
+          example: 3.2
+        type:
+          type: string
+          example: room
+        price:
+          type: number
+          example: 52866
+        reviewCount:
+          type: number
+          example: 1
+        location:
+          type: object
+          example:
+            latitude:
+              type: number
+              example: 50.934361
+            longitude:
+              type: number
+              example: 6.943974
+            zoom:
+              type: number
+              example: 16
+
+    reviews:
+     type: array
+
+     properties:
+      text:
+        type: string
+        example: 'We loved it so much, the house, the view, the location just great.. Highly recommend :)'
+      date:
+        type: string
+        example: 2023-09-19T21:00:00.506Z
+      rating:
+        type: number
+        example: 3.2
+      user:
+        type: string
+        example: 7911a1e0-b7f6-4c18-a83b-b1af7212fccc
+
+    review:
+     type: object
+
+     properties:
+      text:
+        type: string
+        example: 'We loved it so much, the house, the view, the location just great.. Highly recommend :)'
+      date:
+        type: string
+        example: 2023-09-19T21:00:00.506Z
+      rating:
+        type: number
+        example: 3.2
+      user:
+        type: string
+        example: 7911a1e0-b7f6-4c18-a83b-b1af7212fccc
