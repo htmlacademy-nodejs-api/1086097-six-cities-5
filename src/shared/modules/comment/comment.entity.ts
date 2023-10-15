@@ -21,4 +21,3 @@ export class CommentEntity extends defaultClasses.TimeStamps {
 }
 
 export const CommentModel = getModelForClass(CommentEntity);
-
