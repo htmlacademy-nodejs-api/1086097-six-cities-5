@@ -1,4 +1,4 @@
-
+import 'reflect-metadata';
 import { CLIApplication, ImportCommand, HelpCommand, VersionCommand, GenerateCommand } from './cli/index.js';
 
 function bootstrap() {

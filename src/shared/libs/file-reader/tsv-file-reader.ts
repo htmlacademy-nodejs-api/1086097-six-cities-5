@@ -26,7 +26,10 @@ export class TSVFileReader extends EventEmitter implements FileReader {
         const completeRow = remainingData.slice(0, nextLinePosition + 1);
         remainingData = remainingData.slice(++nextLinePosition);
         importedRowCount++;
-        this.emit('line', completeRow);
+        // this.emit('line', completeRow);
+        await new Promise((resolve) => {
+          this.emit('line', completeRow, resolve);
+        });
       }
     }
 

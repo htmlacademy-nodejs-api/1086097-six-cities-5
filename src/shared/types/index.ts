@@ -1,15 +1,38 @@
 export * from './component.enum.js';
 
-export type UserType = {
-  pro: boolean;
+export enum UserType {
+  PRO = 'pro',
+  SIMPLE = 'обычный',
+}
+
+export enum SortType {
+  Down = -1,
+  Up = 1,
+}
+
+export enum СomfortType {
+  BREAKFAST = 'Breakfast',
+  AIR = 'Air conditioning',
+  LAPTOR = 'Laptop friendly workspace',
+  BABY_SEAT = 'Baby seat',
+  WASHER = 'Washer',
+  TOWELS = 'Towels',
+  FRIDGE = 'Fridge',
+}
+
+export enum ApartmentType {
+  APARTMENT = 'apartment',
+  HOUSE = 'house',
+  ROOM = 'room',
+  HOTEL = 'hotel',
 }
 
 export type User = {
   name: string;
   mail: string;
   avatar?: string;
-  password: string;
   userType: UserType;
+  password: string;
 }
 
 export type Comment = {
@@ -39,7 +62,7 @@ export type Offer = {
   guestsCount: number;
   cost: number;
   comfort: string[];
-  author: string;
+  author: User;
   commentsCount: number;
   coords: Coords;
 }
@@ -56,4 +79,5 @@ export type MockServerData = {
   apartmentType: string[];
   comfort: string[];
   author: string[];
+  type: string[];
 }
