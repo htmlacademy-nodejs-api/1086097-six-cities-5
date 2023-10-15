@@ -25,11 +25,15 @@ export class TSVOfferGenerator implements OfferGenerator {
     const apartmentType = getRandomItem<string>(this.mockData.apartmentType);
     const roomCount = generateRandomValue(MIN, MAX).toString();
     const guestsCount = generateRandomValue(MIN, MAX).toString();
-    const cost = '150000';
+    const cost = '80000';
     const comfort = getRandomItems<string>(this.mockData.comfort).join(';');
-    const author = getRandomItem<string>(this.mockData.author);
-    const commentsCount = generateRandomValue(MIN, MAX).toString();
-    const coords = '48.85661;2.351499';
+    const authorName = getRandomItem<string>(this.mockData.author);
+    const authorMail = `${authorName}@mail.ru`;
+    const authorAvatar = 'avat.jpg';
+    const authorType = getRandomItem<string>(this.mockData.type);
+    const commentsCount = 0;
+    const latitude = '48.85661';
+    const longitude = '2.351499';
 
     // const [firstname, lastname] = author.split(' ');
     return [
@@ -37,7 +41,7 @@ export class TSVOfferGenerator implements OfferGenerator {
       city, imagePreview, images,
       premium, favourite, rating, apartmentType,
       roomCount, guestsCount, cost, comfort,
-      author, commentsCount, coords,
+      authorName, authorMail, authorAvatar, authorType, commentsCount, latitude, longitude,
     ].join('\t');
   }
 }

@@ -5,7 +5,7 @@ import { Logger } from '../logger/index.js';
 import { LoggerMessage } from '../../helpers/const.js';
 import { configRestSchema, RestSchema } from './rest.schema.js';
 import { injectable, inject } from 'inversify';
-import { Component } from '../../types/index.js';
+import { Component } from '../../types/component.enum.js';
 
 @injectable()
 export class RestConfig implements Config<RestSchema> {

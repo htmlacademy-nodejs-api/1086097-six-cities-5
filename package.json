@@ -11,7 +11,7 @@
   "scripts": {
     "start": "npm run build && node ./dist/main.rest.js",
     "build": "npm run clean && npm run compile",
-    "start:dev": "npm run ts ./src/main.rest.ts | pino-pretty --colorize --translateTime SYS:standard",
+    "start:dev": "nodemon",
     "lint": "eslint src/ --ext .ts",
     "compile": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
@@ -27,8 +27,8 @@
     "axios": "^1.5.1",
     "eslint": "8.49.0",
     "eslint-config-htmlacademy": "9.1.1",
-    "got": "^13.0.0",
     "json-server": "^0.17.3",
+    "nodemon": "3.0.1",
     "pino-pretty": "^10.2.0",
     "rimraf": "5.0.1",
     "ts-node": "10.9.1",
@@ -40,11 +40,13 @@
     "npm": ">=8"
   },
   "dependencies": {
+    "@typegoose/typegoose": "^11.5.1",
     "chalk": "^5.3.0",
     "convict": "^6.2.4",
     "convict-format-with-validator": "^6.2.0",
     "dotenv": "^16.3.1",
     "inversify": "^6.0.1",
+    "mongoose": "^7.5.4",
     "pino": "^8.15.3",
     "reflect-metadata": "^0.1.13",
     "tslib": "^2.6.2"

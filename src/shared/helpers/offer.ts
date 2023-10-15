@@ -1,4 +1,5 @@
 import { Offer } from '../types/index.js';
+import { UserType } from '../types/index.js';
 
 export function createOffer(offerData: string): Offer {
   const [
@@ -16,11 +17,24 @@ export function createOffer(offerData: string): Offer {
     guestsCount,
     cost,
     comfort,
-    author,
+    authorName,
+    authorMail,
+    authorAvatar,
+    authorType,
     commentsCount,
     latitude,
     longitude,
   ] = offerData.replace('\n', '').split('\t');
+
+  const author = {
+    name: authorName,
+    mail: authorMail,
+    avatar: authorAvatar,
+    userType: UserType[authorType as 'PRO' | 'SIMPLE'],
+    password: '',
+  };
+
+  const coords = {latitude, longitude};
 
   return {
     title,
@@ -39,6 +53,6 @@ export function createOffer(offerData: string): Offer {
     comfort: comfort.split(';').map((name) => name),
     author,
     commentsCount: Number.parseInt(commentsCount, 10),
-    coords: {latitude, longitude},
+    coords,
   };
 }
