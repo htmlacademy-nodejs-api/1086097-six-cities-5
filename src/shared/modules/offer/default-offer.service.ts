@@ -4,10 +4,9 @@ import { Component, SortType } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { DocumentType, types } from '@typegoose/typegoose';
 import { OfferEntity } from './offer.entity.js';
-import { CreateOfferDto } from './create-offer.dto.js';
-import { UpdateOfferDto } from './update-offer.dto.js';
+import { CreateOfferDto, UpdateOfferDto } from './index.js';
 
-const DEFAULT_OFFER_COUNT = 25;
+const DEFAULT_OFFER_COUNT = 60;
 
 @injectable()
 export class DefaultOfferService implements OfferService {
@@ -19,22 +18,70 @@ export class DefaultOfferService implements OfferService {
   public async create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>> {
     const result = await this.offerModel.create(dto);
     this.logger.info(`New offer created: ${dto.title}`);
-
     return result;
   }
 
   public async findById(offerId: string): Promise<DocumentType<OfferEntity> | null> {
     return this.offerModel
       .findById(offerId)
-      .populate(['userId', 'categories'])
+      .populate(['author'])
       .exec();
   }
 
-  public async find(count?: number): Promise<DocumentType<OfferEntity>[]> {
-    const limit = count ?? DEFAULT_OFFER_COUNT;
+  public async findDetailed(count: number): Promise<DocumentType<OfferEntity>[]> {
+    const limit = !count || count && count > DEFAULT_OFFER_COUNT ? DEFAULT_OFFER_COUNT : count;
     return this.offerModel
-      .find({}, {}, {limit})
-      .populate(['userId', 'categories'])
+      .aggregate([
+        {
+          $lookup: {
+            from: 'comments',
+            let: { offerId: '$_id'},
+            pipeline: [
+              {$match: {$expr: { $eq: ['$offerId', '$$offerId'] }}},
+              {$project: {offerId: 1, rating: 1}},
+            ],
+            as: 'commentsCount'
+          },
+        },
+        { $addFields:
+          { id: {$toString: '$_id'},
+            commentsCount: { $size: '$commentsCount'},
+            rating: {$avg: '$commentsCount.rating'},
+            postDate: '$createdAt',
+          }
+        },
+        { $unset: ['updatedAt', 'createdAt', '_id', '__v']},
+        { $limit: limit }
+      ])
+      .exec();
+  }
+
+  public async find(count: number): Promise<DocumentType<OfferEntity>[]> {
+    const limit = !count || count && count > DEFAULT_OFFER_COUNT ? DEFAULT_OFFER_COUNT : count;
+    return this.offerModel
+      .aggregate([
+        {
+          $lookup: {
+            from: 'comments',
+            let: { offerId: '$_id'},
+            pipeline: [
+              {$match: {$expr: { $eq: ['$offerId', '$$offerId'] }}},
+              {$project: {offerId: 1, rating: 1}},
+            ],
+            as: 'commentsCount'
+          },
+        },
+        { $addFields:
+          { id: {$toString: '$_id'},
+            commentsCount: { $size: '$commentsCount'},
+            rating: {$avg: '$commentsCount.rating'},
+            postDate: '$createdAt',
+
+          }
+        },
+        { $unset: ['roomCount', 'guestsCount', 'coords', 'updatedAt', 'createdAt', 'author', 'images', 'description', '_id', '__v']},
+        { $limit: limit }
+      ])
       .exec();
   }
 
@@ -47,28 +94,14 @@ export class DefaultOfferService implements OfferService {
   public async updateById(offerId: string, dto: UpdateOfferDto): Promise<DocumentType<OfferEntity> | null> {
     return this.offerModel
       .findByIdAndUpdate(offerId, dto, {new: true})
-      .populate(['userId', 'categories'])
+      .populate(['author'])
       .exec();
-  }
-
-  // public async findByCategoryId(categoryId: string, count?: number): Promise<DocumentType<OfferEntity>[]> {
-  //   const limit = count ?? DEFAULT_OFFER_COUNT;
-  //   return this.offerModel
-  //     .find({categories: categoryId}, {}, {limit})
-  //     .populate(['userId', 'categories'])
-  //     .exec();
-  // }
-
-  public async exists(documentId: string): Promise<boolean> {
-    return (await this.offerModel
-      .exists({_id: documentId})) !== null;
   }
 
   public async incCommentCount(offerId: string): Promise<DocumentType<OfferEntity> | null> {
     return this.offerModel
-      .findByIdAndUpdate(offerId, {'$inc': {
-        commentCount: 1,
-      }}).exec();
+      .findByIdAndUpdate(offerId, {'$inc': {commentsCount: 1,}})
+      .exec();
   }
 
   public async findNew(count: number): Promise<DocumentType<OfferEntity>[]> {
@@ -76,7 +109,7 @@ export class DefaultOfferService implements OfferService {
       .find()
       .sort({ createdAt: SortType.Down })
       .limit(count)
-      .populate(['userId', 'categories'])
+      .populate(['author'])
       .exec();
   }
 
@@ -85,7 +118,7 @@ export class DefaultOfferService implements OfferService {
       .find()
       .sort({ commentCount: SortType.Down })
       .limit(count)
-      .populate(['userId', 'categories'])
+      .populate(['author'])
       .exec();
   }
 }
