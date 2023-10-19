@@ -1,5 +1,10 @@
 export * from './component.enum.js';
 
+// export type UserTypes = {
+//   PRO = 'pro',
+//   SIMPLE = 'обычный',
+// }
+
 export enum UserType {
   PRO = 'pro',
   SIMPLE = 'обычный',

@@ -1,6 +1,14 @@
 import { defaultClasses, getModelForClass, modelOptions, prop, Ref } from '@typegoose/typegoose';
 import { UserEntity } from '../user/index.js';
-import { Coords, ApartmentType } from '../../types/index.js';
+import { ApartmentType } from '../../types/index.js';
+
+class Coordinates {
+  @prop({ required: true })
+  public latitude: string;
+
+  @prop({ required: true })
+  public longitude: string;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface OfferEntity extends defaultClasses.Base {}
@@ -8,6 +16,7 @@ export interface OfferEntity extends defaultClasses.Base {}
 @modelOptions({schemaOptions: {collection: 'offers'}})
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class OfferEntity extends defaultClasses.TimeStamps {
+
   @prop({ trim: true, required: true, minlength: [10, 'Min length for title is 10'], maxlength: [100, 'Max length for title is 100'] })
   public title: string;
 
@@ -17,20 +26,20 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   @prop({required: true})
   public postDate: Date;
 
-  @prop({required: true})
+  @prop({required: true, trim: true})
   public city: string;
 
-  @prop({required: true})
+  @prop({required: true, trim: true})
   public imagePreview: string;
 
-  @prop({required: true, type: [String]})
+  @prop({trim: true, required: true, type: [String]})
   public images: string[];
 
   @prop({required: true})
   public premium: boolean;
 
   @prop({required: true})
-  public favourite!: boolean;
+  public favourite: boolean;
 
   @prop({required: true, default: 0, min: 0, max: 5})
   public rating: number;
@@ -51,12 +60,12 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   public comfort: string[];
 
   @prop({required: true})
-  public coords: Coords;
+  public coords: Coordinates;
 
   @prop({default: 0})
   public commentsCount: number;
 
-  @prop({ref: UserEntity, required: true, _id: false})
+  @prop({ref: UserEntity, required: true, _id: false, name: false})
   public author: Ref<UserEntity>;
 
   public offerId: string;
