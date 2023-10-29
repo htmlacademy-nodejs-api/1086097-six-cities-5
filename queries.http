@@ -37,8 +37,9 @@ GET http://localhost:5000/offers/ HTTP/1.1
 
 ###
 
+
 ## Получение детального предложения
-GET http://localhost:5000/offers/detailed HTTP/1.1
+GET http://localhost:5000/offers/detailed/ HTTP/1.1
 
 ###
 
