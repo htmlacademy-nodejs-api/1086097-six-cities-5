@@ -6,8 +6,12 @@ import { Component } from '../shared/types/component.enum.js';
 import { DatabaseClient } from '../shared/libs/database-client/index.js';
 import { getMongoURI } from '../shared/helpers/database.js';
 
+import express, { Express } from 'express';
+import { Controller, ExceptionFilter } from '../shared/libs/rest/index.js';
+
+
 // import { CommentService } from '../shared/modules/comment/index.js';
-import { OfferService } from '../shared/modules/offer/index.js';
+// import { OfferService } from '../shared/modules/offer/index.js';
 // import { UserService } from '../shared/modules/user/index.js';
 // import { UserType } from '../shared/types/index.js';
 
@@ -15,14 +19,39 @@ import { OfferService } from '../shared/modules/offer/index.js';
 
 @injectable()
 export class RestApplication {
+  private express: Express;
   constructor(
     @inject(Component.Logger) private readonly logger: Logger,
     @inject(Component.Config) private readonly config: Config<RestSchema>,
     @inject(Component.DatabaseClient) private readonly databaseClient: DatabaseClient,
-    @inject(Component.OfferService) private readonly offerService: OfferService,
+    @inject(Component.CommentController) private readonly commentController: Controller,
+    @inject(Component.OfferController) private readonly оfferController: Controller,
+    @inject(Component.UserController) private readonly userController: Controller,
+    @inject(Component.ExceptionFilter) private readonly appExceptionFilter: ExceptionFilter,
+
+
+    // @inject(Component.OfferService) private readonly offerService: OfferService,
     // @inject(Component.UserService) private readonly UserService: UserService,
-    // @inject(Component.CommentService) private readonly CommentService: CommentService,
-  ) {}
+    // @inject(Component.CommentService) private readonly commentService: CommentService,
+  ) {
+    this.express = express();
+  }
+
+  private async _initServer() {
+    const port = this.config.get('PORT');
+    this.express.listen(port);
+
+  }
+
+  private async _initControllers() {
+    this.express.use('/comments', this.commentController.router);
+    this.express.use('/offers', this.оfferController.router);
+    this.express.use('/users', this.userController.router);
+  }
+
+  private async _initMiddleware() {
+    this.express.use(express.json());
+  }
 
   private async _initDb() {
     const mongoUri = getMongoURI(
@@ -36,37 +65,32 @@ export class RestApplication {
     return this.databaseClient.connect(mongoUri);
   }
 
+  private async _initExceptionFilters() {
+    this.express.use(this.appExceptionFilter.catch.bind(this.appExceptionFilter));
+  }
+
   public async init() {
     this.logger.info(LoggerMessage.INITIALIZATION);
-    this.logger.info(`Get value from env $PORT: ${this.config.get('PORT')}`);
 
     this.logger.info('Init database…');
     await this._initDb();
     this.logger.info('Init database completed');
 
-    //  const newob = {
-    //   title: "Sverdlov Hotel",
-    //   description: "its may hotel its beautyfull hotel",
-    //   postDate: new Date,
-    //   city: "Paris",
-    //   imagePreview: 'cologne.jpg',
-    //   images: ['cologne.jpg', 'cologne.jpg'],
-    //   premium: false,
-    //   favourite: false,
-    //   rating: 1,
-    //   apartmentType: "room",
-    //   roomCount: 3,
-    //   guestsCount: 2,
-    //   cost: 80000,
-    //   comfort: ['Fridge'],
-    //   author: Object('652fb855f1959dc5f13f03fa'),
-    //   coords: {
-    //     latitude: "48.85661",
-    //     longitude: "2.351499",
-    //   },
-    //   commentsCount: 11,
-    //   offerId: '',
-    //  }
+    this.logger.info('Init app-level middleware');
+    await this._initMiddleware();
+    this.logger.info('App-level middleware initialization completed');
+
+    this.logger.info('Init controllers...');
+    await this._initControllers();
+    this.logger.info('Controller initialization completed');
+
+    this.logger.info('Init exception filters');
+    await this._initExceptionFilters();
+    this.logger.info('Exception filters initialization compleated');
+
+    this.logger.info('Try to init server...');
+    await this._initServer();
+    this.logger.info(`Server started on http://localhost:${this.config.get('PORT')}`);
 
     // const userNew = {
     //   name: 'Олег Попов',
@@ -77,27 +101,18 @@ export class RestApplication {
     // }
 
     // const commentNew = {
-    //   text: 'sdsdf sdf sdf sdfsdfk kj; sdlrt ,;kl;lk;lk dfjjjjjjjj kkkkkkkkkk',
+    //   text: 'Best best best. Uraaaaaaaa fun fun fun',
     //   rating: 5,
-    //   author: '652fb855f1959dc5f13f03fa',
-    //   offerId: '652fbd1a327d91be7e795baa',
-    // }
+    //   author: '65393031ea34f7018af34a94',
+    //   offerId: '65393031ea34f7018af34a96',
+    // };
 
 
     // const user = await this.UserService.findOrCreate(userNew, 'secret')
-    const offer = await this.offerService.find();
-    // const comment = await this.CommentService.create(commentNew);
+    // const offer = await this.offerService.find();
+    // const comment = await this.commentService.findByOfferId('65393031ea34f7018af34a96');
     // const offer = await this.OfferService.create(newob);
-    console.log(offer);
     // console.log(comment);
-
-    // const us = {
-    //   name: 'Keksik',
-    //   mail: 'test@email.ru',
-    //   avatar: 'keks.jpg',
-    //   userType: 'pro',
-    //   password: '123f',
-    // };
 
     // const user = new DefaultUserService();
     // await user.create(us, 'six');

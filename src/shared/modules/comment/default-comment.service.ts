@@ -23,9 +23,17 @@ export class DefaultCommentService implements CommentService {
     const limit = !count || count && count > DEFAULT_COMMENT_COUNT ? DEFAULT_COMMENT_COUNT : count;
 
     return this.commentModel
-      .find({offers: offerId}, {}, {limit})
+      .find({offerId}, {}, {limit})
       .sort({ createdAt: SortType.Down })
       .populate(['author', 'offerId'])
       .exec();
+  }
+
+  public async deleteByOfferId(offerId: string): Promise<number> {
+    const result = await this.commentModel
+      .deleteMany({offerId})
+      .exec();
+
+    return result.deletedCount;
   }
 }

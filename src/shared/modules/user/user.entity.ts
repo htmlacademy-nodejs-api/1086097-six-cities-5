@@ -18,6 +18,9 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
   @prop({default: 'defaultavatar.jpg'})
   public avatar?: string;
 
+  @prop({default: [], type: [String]})
+  public favoriteOffers: string[];
+
   @prop({required: true, type: () => String, enum: UserType})
   public userType: UserType;
 
@@ -26,7 +29,6 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
 
   constructor(userData: User) {
     super();
-
     this.name = userData.name;
     this.mail = userData.mail;
     this.avatar = userData.avatar;

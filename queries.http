@@ -1,4 +1,103 @@
-# Get mock data from fake server
-GET http://localhost:3100/api HTTP/1.1
+# Комментарии
+## Получение комментариев по id предложения
+GET http://localhost:5000/comments/65393031ea34f7018af34a96 HTTP/1.1
+###
+
+
+## Создание комментария
+POST http://localhost:5000/comments HTTP/1.1
+Content-Type: application/json
+
+{
+  "text": "I think it is normal place. Its all RAMA",
+  "rating": 4,
+  "offerId": "653c23f4ae1adfe59b3422af",
+  "author": "65393031ea34f7018af34aa4"
+}
+###
+
+
+# Пользователи
+## Создать нового пользователя
+POST http://localhost:5000/users/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Nickola",
+  "mail": "nick@ya.net",
+  "avatar": "nickol.png",
+  "userType": "pro",
+  "password": "123fffff"
+}
+###
+
+# Предложения
+## Получение предложений
+GET http://localhost:5000/offers/ HTTP/1.1
 
 ###
+
+## Получение детального предложения
+GET http://localhost:5000/offers/detailed HTTP/1.1
+
+###
+
+## Получение премиальных предложений по городу
+GET http://localhost:5000/offers/Dusseldorf HTTP/1.1
+
+###
+
+## Создание предложения
+POST http://localhost:5000/offers HTTP/1.1
+Content-Type: application/json
+
+{
+    "title": "Ramenskoe Hotel",
+    "description": "its may hotel its beautyfull hotel",
+    "postDate": "2023-10-27T20:08:59.937Z",
+    "city": "Paris",
+    "imagePreview": "paris.jpg",
+    "images": ["paris1.jpg", "paris2.jpg"],
+    "premium": false,
+    "favourite": false,
+    "rating": 0,
+    "apartmentType": "room",
+    "roomCount": 3,
+    "guestsCount": 2,
+    "cost": 80000,
+    "comfort": ["Fridge"],
+    "author": "652fb855f1959dc5f13f03fa",
+     "commentsCount": 0,
+    "coords": {
+      "latitude": "48.85661",
+      "longitude": "2.351499"
+    }
+}
+###
+
+## Обновление предложения
+PATCH http://localhost:5000/offers/653c190579aadd1220274de0 HTTP/1.1
+Content-Type: application/json
+
+{
+    "title": "Ramenskoe Hotellllll",
+    "description": "its may hotel its beautyfull hotelllllll"
+}
+###
+
+## Удаление предложения
+DELETE http://localhost:5000/offers/653c23f4ae1adfe59b3422af HTTP/1.1
+###
+
+## Добавление в избранное
+PATCH http://localhost:5000/offers/65393031ea34f7018af34a9c/653e452f2e5854b16b023097 HTTP/1.1
+###
+
+## Удаление из избранного
+DELETE  http://localhost:5000/offers/65393031ea34f7018af34a9c/653d5186f3de405a605e0297 HTTP/1.1
+###
+
+## Получение избранных по пользователю
+GET  http://localhost:5000/offers/favorite/653d5186f3de405a605e0297 HTTP/1.1
+###
+

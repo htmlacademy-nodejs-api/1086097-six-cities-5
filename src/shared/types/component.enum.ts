@@ -9,4 +9,8 @@ export const Component = {
   UserModel: Symbol.for('UserModel'),
   OfferModel: Symbol.for('OfferModel'),
   CommentModel: Symbol.for('CommentModel'),
+  ExceptionFilter: Symbol.for('ExceptionFilter'),
+  CommentController: Symbol.for('CommentController'),
+  OfferController: Symbol.for('OfferController'),
+  UserController: Symbol.for('UserController'),
 } as const;
