@@ -35,4 +35,14 @@ export class DefaultUserService implements UserService {
 
     return this.create(dto, salt);
   }
+
+  public async findByIdAndAddToFavourite(offerId: string, userId: string): Promise<DocumentType<UserEntity> | null> {
+    return this.userModel
+      .findByIdAndUpdate(userId, {'$push': {favoriteOffers: offerId}}).exec();
+  }
+
+  public async findByIdAndDeleteFromFavourite(offerId: string, userId: string): Promise<DocumentType<UserEntity> | null> {
+    return this.userModel
+      .findByIdAndUpdate(userId, {'$pull': {favoriteOffers: offerId}}).exec();
+  }
 }

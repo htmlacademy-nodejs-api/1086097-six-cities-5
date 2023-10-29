@@ -5,8 +5,10 @@ import { Logger } from '../../libs/logger/index.js';
 import { DocumentType, types } from '@typegoose/typegoose';
 import { OfferEntity } from './offer.entity.js';
 import { CreateOfferDto, UpdateOfferDto } from './index.js';
+// import { __values } from 'tslib';
 
 const DEFAULT_OFFER_COUNT = 60;
+const PREMIUM_OFFER_LIMIT = 3;
 
 @injectable()
 export class DefaultOfferService implements OfferService {
@@ -76,7 +78,6 @@ export class DefaultOfferService implements OfferService {
             commentsCount: { $size: '$commentsCount'},
             rating: {$avg: '$commentsCount.rating'},
             postDate: '$createdAt',
-
           }
         },
         { $unset: ['roomCount', 'guestsCount', 'coords', 'updatedAt', 'createdAt', 'author', 'images', 'description', '_id', '__v']},
@@ -98,6 +99,48 @@ export class DefaultOfferService implements OfferService {
       .exec();
   }
 
+  public async updateFavourite(offerId: string): Promise<DocumentType<OfferEntity> | null> {
+    return this.offerModel
+      .findOneAndUpdate({_id: offerId }, [{'$set': {favourite : {'$not': '$favourite'}}}])
+      .populate(['author'])
+      .exec();
+  }
+
+  /////////////////////////////пока не работает
+  public async getFavourite(userId: string): Promise<DocumentType<OfferEntity>[]> {
+    const offers = await this.offerModel.aggregate([
+      {
+        $lookup: {
+          from: 'Users',
+          let: { offerId: '$_id'},
+          pipeline: [
+            {$match: {$expr: { $in: ['$$offerId', '$favoriteOffers'] }}},
+            {$project: {_id: 1}}
+          ],
+          as: 'favorites'
+        }
+      },
+      { $match: { $expr: { $in: [{ _id: { $toObjectId: userId } }, '$favorites'] } } }
+
+    ]).exec();
+    return offers;
+  }
+
+  // public async addToFavourite(offerId: string): Promise<DocumentType<OfferEntity> | null> {
+  //   return this.offerModel
+  //     .findOneAndUpdate({_id: offerId }, [{'$set': {favourite : {'$not': '$favourite'}}}])
+  //     .populate(['author'])
+  //     .exec();
+  // }
+
+  public async getPremiumByCity(city: string): Promise<DocumentType<OfferEntity>[]> {
+    return this.offerModel
+      .find({city: city, premium: true}, {}, {})
+      .limit(PREMIUM_OFFER_LIMIT)
+      .sort({ createdAt: SortType.Down })
+      .exec();
+  }
+
   public async incCommentCount(offerId: string): Promise<DocumentType<OfferEntity> | null> {
     return this.offerModel
       .findByIdAndUpdate(offerId, {'$inc': {commentsCount: 1,}})
@@ -108,15 +151,6 @@ export class DefaultOfferService implements OfferService {
     return this.offerModel
       .find()
       .sort({ createdAt: SortType.Down })
-      .limit(count)
-      .populate(['author'])
-      .exec();
-  }
-
-  public async findDiscussed(count: number): Promise<DocumentType<OfferEntity>[]> {
-    return this.offerModel
-      .find()
-      .sort({ commentCount: SortType.Down })
       .limit(count)
       .populate(['author'])
       .exec();

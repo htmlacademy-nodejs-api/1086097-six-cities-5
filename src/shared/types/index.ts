@@ -1,9 +1,7 @@
 export * from './component.enum.js';
 
-// export type UserTypes = {
-//   PRO = 'pro',
-//   SIMPLE = 'обычный',
-// }
+export type RequestParams = Record<string, unknown>;
+export type RequestBody = Record<string, unknown>;
 
 export enum UserType {
   PRO = 'pro',

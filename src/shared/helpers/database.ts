@@ -7,4 +7,5 @@ export function getMongoURI(
 ): string {
 
   return `mongodb://${username}:${password}@${host}:${port}/${databaseName}?authSource=admin`;
+  // return `mongodb://${username}:${password}@${host}:${port}/${databaseName}?retryWrites=true&w=majority`;
 }

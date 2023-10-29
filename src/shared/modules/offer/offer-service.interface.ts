@@ -11,5 +11,7 @@ export interface OfferService {
   updateById(offerId: string, dto: UpdateOfferDto): Promise<DocumentType<OfferEntity> | null>;
   incCommentCount(offerId: string): Promise<DocumentType<OfferEntity> | null>;
   findNew(count: number): Promise<DocumentType<OfferEntity>[]>;
-  findDiscussed(count: number): Promise<DocumentType<OfferEntity>[]>;
+  updateFavourite(offerId: string): Promise<DocumentType<OfferEntity> | null>;
+  getPremiumByCity(city: string): Promise<DocumentType<OfferEntity>[]>;
+  getFavourite(userId: string): Promise<DocumentType<OfferEntity>[]>;
 }
