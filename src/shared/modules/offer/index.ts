@@ -1,3 +1,4 @@
+export * from './offer-validation-message.js';
 export * from './create-offer.dto.js';
 export * from './update-offer.dto.js';
 export * from './offer-service.interface.js';

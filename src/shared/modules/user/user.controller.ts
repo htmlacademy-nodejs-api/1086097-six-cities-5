@@ -5,18 +5,15 @@ import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
 import { UserRdo } from './index.js';
 import { fillDTO } from '../../helpers/index.js';
-import { CreateUserDto } from './index.js';
+import { CreateUserDto, LoginUserDto } from './index.js';
 import { UserService } from './index.js';
 import { Config, RestSchema } from '../../libs/config/index.js';
 import { StatusCodes } from 'http-status-codes';
-import { ParamsDictionary } from 'express-serve-static-core';
 import { RequestParams, RequestBody} from '../../types/index.js';
-
-export type ParamUserMail = {
-  mail: string;
-} | ParamsDictionary;
+import { ValidateDtoMiddleware } from '../../libs/rest/index.js';
 
 export type CreateUserRequest = Request<RequestParams, RequestBody, CreateUserDto>;
+export type LoginUserRequest = Request<RequestParams, RequestBody, LoginUserDto>;
 
 @injectable()
 export class UserController extends BaseController {
@@ -30,30 +27,42 @@ export class UserController extends BaseController {
 
     this.logger.info('Register routes for UserController...');
 
-    // this.addRoute({ path: '/:mail', method: HttpMethod.Get, handler: this.findByEmail });
-    this.addRoute({ path: '/register', method: HttpMethod.Post, handler: this.create });
+    this.addRoute({ path: '/login', method: HttpMethod.Post, handler: this.login, middlewares: [new ValidateDtoMiddleware(LoginUserDto)] });
+    this.addRoute({ path: '/register', method: HttpMethod.Post, handler: this.create, middlewares: [new ValidateDtoMiddleware(CreateUserDto)] });
   }
 
-  public async create(req: CreateUserRequest, res: Response): Promise<void> {
-    const existsUser = await this.userService.findByEmail(req.body.mail);
+  public async create({body}: CreateUserRequest, res: Response): Promise<void> {
+    const existsUser = await this.userService.findByEmail(body.mail);
 
     if (existsUser) {
       throw new HttpError(
         StatusCodes.CONFLICT,
-        `User with email ${req.body.mail} exists.`,
+        `User with email ${body.mail} exists.`,
         'UserController'
       );
     }
 
     const salt = this.config.get('SALT');
-    const user = await this.userService.create(req.body, salt);
+    const user = await this.userService.create(body, salt);
     this.created(res, fillDTO(UserRdo, user));
-    this.logger.info(`Created user for offer ${req.body.mail}`);
+    this.logger.info(`Created user ${body.mail}`);
   }
 
-  // public async findByEmail({ params }: Request<ParamUserMail>, res: Response): Promise<void> {
-  //   const user = await this.userService.findByEmail(params.mail);
-  //   this.ok(res, fillDTO(UserRdo, user));
-  //   this.logger.info(`User ${user?.name} finded`);
-  // }
+  public async login(req: LoginUserRequest, _res: Response): Promise<void> {
+    const user = await this.userService.findByEmail(req.body.mail);
+
+    if (! user) {
+      throw new HttpError(
+        StatusCodes.UNAUTHORIZED,
+        `User with email ${req.body.mail} not found.`,
+        'UserController',
+      );
+    }
+
+    throw new HttpError(
+      StatusCodes.NOT_IMPLEMENTED,
+      'Not implemented',
+      'UserController',
+    );
+  }
 }

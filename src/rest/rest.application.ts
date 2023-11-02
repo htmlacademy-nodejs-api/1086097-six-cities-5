@@ -9,14 +9,6 @@ import { getMongoURI } from '../shared/helpers/database.js';
 import express, { Express } from 'express';
 import { Controller, ExceptionFilter } from '../shared/libs/rest/index.js';
 
-
-// import { CommentService } from '../shared/modules/comment/index.js';
-// import { OfferService } from '../shared/modules/offer/index.js';
-// import { UserService } from '../shared/modules/user/index.js';
-// import { UserType } from '../shared/types/index.js';
-
-// import { DefaultUserService } from '../shared/modules/user/index.js';
-
 @injectable()
 export class RestApplication {
   private express: Express;
@@ -28,11 +20,6 @@ export class RestApplication {
     @inject(Component.OfferController) private readonly оfferController: Controller,
     @inject(Component.UserController) private readonly userController: Controller,
     @inject(Component.ExceptionFilter) private readonly appExceptionFilter: ExceptionFilter,
-
-
-    // @inject(Component.OfferService) private readonly offerService: OfferService,
-    // @inject(Component.UserService) private readonly UserService: UserService,
-    // @inject(Component.CommentService) private readonly commentService: CommentService,
   ) {
     this.express = express();
   }
@@ -91,31 +78,5 @@ export class RestApplication {
     this.logger.info('Try to init server...');
     await this._initServer();
     this.logger.info(`Server started on http://localhost:${this.config.get('PORT')}`);
-
-    // const userNew = {
-    //   name: 'Олег Попов',
-    //   mail: 'avt@yandex.ru',
-    //   avatar: 'avvatar.jpg',
-    //   userType: UserType.SIMPLE,
-    //   password: '',
-    // }
-
-    // const commentNew = {
-    //   text: 'Best best best. Uraaaaaaaa fun fun fun',
-    //   rating: 5,
-    //   author: '65393031ea34f7018af34a94',
-    //   offerId: '65393031ea34f7018af34a96',
-    // };
-
-
-    // const user = await this.UserService.findOrCreate(userNew, 'secret')
-    // const offer = await this.offerService.find();
-    // const comment = await this.commentService.findByOfferId('65393031ea34f7018af34a96');
-    // const offer = await this.OfferService.create(newob);
-    // console.log(comment);
-
-    // const user = new DefaultUserService();
-    // await user.create(us, 'six');
-
   }
 }

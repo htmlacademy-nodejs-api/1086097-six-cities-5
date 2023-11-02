@@ -1,34 +1,18 @@
 {
   "api": {
-    "categories": [
-        "Книги",
-        "Журналы",
-        "Посуда",
-        "Разное",
-        "Диски"
-    ],
     "titles": [
-        "Тёмная башня",
-        "Извлечение троих",
-        "Глаза дракона",
-        "Зелёная миля",
-        "Жребий Салема",
-        "Бегущий человек",
-        "История Лизи",
-        "Гвенди и её волшебная шкатулка",
-        "Крёстный Отец",
-        "Атлант расправил плечи"
+        "Apartment Hotel",
+        "Par Apartment Hotel Par",
+        "Residential hotel hotel",
+        "Stay Extended Stay Hotel ",
+        "Room Commercial hotel"
     ],
     "descriptions": [
-        "Страшный рассказ о драконе. Колдовство, предательство и необыкновенный мир фэнтези.",
-        "История про вампиров из маленького городка. Коварство, нестандартный сюжет и необыкновенные приключения священника.",
-        "Идти или остановиться? Вопрос без правильного ответа. Рассказ о долгой и смертельной прогулке.",
-        "Как похудеть и не сойти с ума? А как вернуть вес обратно? Необычная история противостояния.",
-        "Прими звонок и превратись в зомби. Рассказ о зомбировании через средства связи.",
-        "Виновен или нет? Какая разница. Исход один. Сверхспособности не помогут.",
-        "И у машин есть душа. Хорошо ли это? Мистический рассказ про автомобиль.",
-        "Криминальная сага от неповторимого Марио Пьюзо. Перестрелки, погони, предательство и дружба.",
-        "Мир населяют не только люди. Иные живут вместе с ними и визуально ничем не отличаются. История про магию и могущественных существ. Борьба сил Добра и Зла."
+        "The aim of this site is to help you to build a firm foundation for your English to which you will be able to add new knowledge yourself. This basis consists of four essential.",
+        "Educational materials on the site Useful English are designed to serve this purpose, and the guiding principle.",
+        "The exercises on this site will help you to check your knowledge of grammar, synonyms, phrasal verbs, idioms, phrases, spelling, etc.",
+        "It is easy to explain English words and phrases without translation in class, where teachers and students communicate face to face.",
+        "t is important to stress that we do not recommend studying English by comparing the text in English with its Russian translation."
     ],
     "city": [
       "Paris",
@@ -101,7 +85,7 @@
       "false"
     ],
     "favourite": [
-      "true",
+      "false",
       "false"
     ],
     "apartmentType": [

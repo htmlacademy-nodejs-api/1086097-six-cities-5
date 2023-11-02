@@ -59,7 +59,7 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   @prop({required: true, type: [String]})
   public comfort: string[];
 
-  @prop({required: true})
+  @prop({required: true, _id: false})
   public coords: Coordinates;
 
   @prop({default: 0})
