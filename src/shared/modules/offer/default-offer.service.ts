@@ -3,9 +3,10 @@ import { OfferService } from './offer-service.interface.js';
 import { Component, SortType } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { DocumentType, types } from '@typegoose/typegoose';
-import { OfferEntity } from './offer.entity.js';
-import { CreateOfferDto, UpdateOfferDto } from './index.js';
-// import { __values } from 'tslib';
+import { OfferEntity, CreateOfferDto, UpdateOfferDto } from './index.js';
+import { UserEntity } from '../user/index.js';
+import { HttpError } from '../../libs/rest/index.js';
+import { StatusCodes } from 'http-status-codes';
 
 const DEFAULT_OFFER_COUNT = 60;
 const PREMIUM_OFFER_LIMIT = 3;
@@ -14,10 +15,17 @@ const PREMIUM_OFFER_LIMIT = 3;
 export class DefaultOfferService implements OfferService {
   constructor(
     @inject(Component.Logger) private readonly logger: Logger,
-    @inject(Component.OfferModel) private readonly offerModel: types.ModelType<OfferEntity>
+    @inject(Component.OfferModel) private readonly offerModel: types.ModelType<OfferEntity>,
+    @inject(Component.UserModel) private readonly userModel: types.ModelType<UserEntity>
   ) {}
 
   public async create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>> {
+    const user = await this.userModel.findById(dto.author);
+
+    if (!user) {
+      throw new HttpError(StatusCodes.BAD_REQUEST, 'This user not exists', 'DefaultUserService');
+    }
+
     const result = await this.offerModel.create(dto);
     this.logger.info(`New offer created: ${dto.title}`);
     return result;
@@ -30,7 +38,26 @@ export class DefaultOfferService implements OfferService {
       .exec();
   }
 
-  public async findDetailed(count: number): Promise<DocumentType<OfferEntity>[]> {
+  public authorPipeline = [
+    {
+      $lookup: {
+        from: 'Users',
+        localField: 'author',
+        foreignField: '_id',
+        as: 'users',
+      },
+    },
+    {
+      $addFields: {
+        author: { $arrayElemAt: ['$users', 0] },
+      },
+    },
+    {
+      $unset: ['users'],
+    },
+  ];
+
+  public async findDetailed(id: string, count?: number): Promise<DocumentType<OfferEntity>[]> {
     const limit = !count || count && count > DEFAULT_OFFER_COUNT ? DEFAULT_OFFER_COUNT : count;
     return this.offerModel
       .aggregate([
@@ -53,7 +80,26 @@ export class DefaultOfferService implements OfferService {
           }
         },
         { $unset: ['updatedAt', 'createdAt', '_id', '__v']},
-        { $limit: limit }
+        { $limit: limit },
+        {
+          $lookup: {
+            from: 'Users',
+            localField: 'author',
+            foreignField: '_id',
+            as: 'users',
+          },
+        },
+        {
+          $addFields: {
+            author: { $arrayElemAt: ['$users', 0] },
+          },
+        },
+        {
+          $unset: ['users'],
+        },
+        {
+          $match: {$expr: {$eq: ['$id', id]}}
+        },
       ])
       .exec();
   }
@@ -87,12 +133,22 @@ export class DefaultOfferService implements OfferService {
   }
 
   public async deleteById(offerId: string): Promise<DocumentType<OfferEntity> | null> {
+    const offer = await this.offerModel.findById(offerId);
+    if (!offer) {
+      throw new HttpError(StatusCodes.BAD_REQUEST, 'This offer not exists', 'DefaultOfferService');
+    }
+
     return this.offerModel
       .findByIdAndDelete(offerId)
       .exec();
   }
 
   public async updateById(offerId: string, dto: UpdateOfferDto): Promise<DocumentType<OfferEntity> | null> {
+    const offer = await this.offerModel.findById(offerId);
+    if (!offer) {
+      throw new HttpError(StatusCodes.BAD_REQUEST, 'This offer not exists', 'DefaultOfferService');
+    }
+
     return this.offerModel
       .findByIdAndUpdate(offerId, dto, {new: true})
       .populate(['author'])
@@ -106,37 +162,52 @@ export class DefaultOfferService implements OfferService {
       .exec();
   }
 
-  /////////////////////////////пока не работает
   public async getFavourite(userId: string): Promise<DocumentType<OfferEntity>[]> {
     const offers = await this.offerModel.aggregate([
       {
         $lookup: {
           from: 'Users',
-          let: { offerId: '$_id'},
+          let: { userId: { $toObjectId: userId } },
           pipeline: [
-            {$match: {$expr: { $in: ['$$offerId', '$favoriteOffers'] }}},
-            {$project: {_id: 1}}
+            { $match: { $expr: { $eq: ['$_id', '$$userId'] } } },
+            { $project: { _id: 0, favoriteOffers: 1 } },
           ],
-          as: 'favorites'
+          as: 'users',
+        },
+      },
+      {
+        $addFields: {
+          favorites: { $arrayElemAt: ['$users', 0] },
+        },
+      },
+      {
+        $unset: ['users'],
+      },
+      // {
+      //   $match: {
+      //     $expr: {
+      //       $in: ['$_id', '$favorites.favoriteOffers'],
+      //     },
+      //   }
+      // },
+
+      {
+        $match: {
+          $expr: {
+            $in: ['$_id', { $map: { input: '$favorites.favoriteOffers', as: 'favorite', in: { $toObjectId: '$$favorite' } } }],
+          },
         }
       },
-      { $match: { $expr: { $in: [{ _id: { $toObjectId: userId } }, '$favorites'] } } }
-
+      {'$set': {favourite : {'$not': '$favourite'}}}
     ]).exec();
     return offers;
   }
 
-  // public async addToFavourite(offerId: string): Promise<DocumentType<OfferEntity> | null> {
-  //   return this.offerModel
-  //     .findOneAndUpdate({_id: offerId }, [{'$set': {favourite : {'$not': '$favourite'}}}])
-  //     .populate(['author'])
-  //     .exec();
-  // }
-
-  public async getPremiumByCity(city: string): Promise<DocumentType<OfferEntity>[]> {
+  public async getPremiumByCity(city: string, query: number): Promise<DocumentType<OfferEntity>[]> {
+    const limit = !query || query > PREMIUM_OFFER_LIMIT ? PREMIUM_OFFER_LIMIT : query;
     return this.offerModel
       .find({city: city, premium: true}, {}, {})
-      .limit(PREMIUM_OFFER_LIMIT)
+      .limit(limit)
       .sort({ createdAt: SortType.Down })
       .exec();
   }
@@ -147,12 +218,7 @@ export class DefaultOfferService implements OfferService {
       .exec();
   }
 
-  public async findNew(count: number): Promise<DocumentType<OfferEntity>[]> {
-    return this.offerModel
-      .find()
-      .sort({ createdAt: SortType.Down })
-      .limit(count)
-      .populate(['author'])
-      .exec();
+  public async exists(documentId: string): Promise<boolean> {
+    return (await this.offerModel.exists({_id: documentId})) !== null;
   }
 }

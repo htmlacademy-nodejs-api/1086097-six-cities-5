@@ -1,6 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { Request, Response } from 'express';
-import { BaseController, HttpMethod } from '../../libs/rest/index.js';
+import { BaseController, HttpMethod, ValidateObjectIdMiddleware, ValidateDtoMiddleware, DocumentExistsMiddleware} from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
 import { OfferService, CreateOfferDto, OfferRdo, OfferRdoShort, UpdateOfferDto } from './index.js';
@@ -28,6 +28,10 @@ export type ParamFavorite = {
   id: string;
 } | ParamsDictionary;
 
+export type RequestQuery = {
+  limit?: number;
+}
+
 @injectable()
 export class OfferController extends BaseController {
 
@@ -40,32 +44,32 @@ export class OfferController extends BaseController {
     super(logger);
 
     this.logger.info('Register routes for OfferController...');
-
     this.addRoute({ path: '/', method: HttpMethod.Get, handler: this.index });
-    this.addRoute({ path: '/:city', method: HttpMethod.Get, handler: this.getPremiumByCity });
-    this.addRoute({ path: '/detailed', method: HttpMethod.Get, handler: this.indexDetailed });
-    this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create });
-    this.addRoute({ path: '/:id', method: HttpMethod.Delete, handler: this.delete });
-    this.addRoute({ path: '/:id', method: HttpMethod.Patch, handler: this.update });
-    this.addRoute({ path: '/:id/:_id', method: HttpMethod.Patch, handler: this.addToFavourite });
-    this.addRoute({ path: '/:id/:_id', method: HttpMethod.Delete, handler: this.deleteFromFavourite });
-    this.addRoute({ path: '/favorite/:_id', method: HttpMethod.Get, handler: this.getFavourite });
+    this.addRoute({ path: '/premium/:city', method: HttpMethod.Get, handler: this.showPremiumByCity });
+    this.addRoute({ path: '/:id', method: HttpMethod.Get, handler: this.indexDetailed, middlewares: [new ValidateObjectIdMiddleware('id'), new DocumentExistsMiddleware(this.offerService, 'Offer', 'id')] });
+    this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create, middlewares: [new ValidateDtoMiddleware(CreateOfferDto)]});
+    this.addRoute({ path: '/:id', method: HttpMethod.Delete, handler: this.delete, middlewares: [new ValidateObjectIdMiddleware('id'), new DocumentExistsMiddleware(this.offerService, 'Offer', 'id')]});
+    this.addRoute({ path: '/:id', method: HttpMethod.Patch, handler: this.update, middlewares: [new ValidateObjectIdMiddleware('id'), new ValidateDtoMiddleware(UpdateOfferDto), new DocumentExistsMiddleware(this.offerService, 'Offer', 'id')] });
+    this.addRoute({ path: '/:id/:_id', method: HttpMethod.Patch, handler: this.addToFavourite, middlewares: [new ValidateObjectIdMiddleware('id'), new DocumentExistsMiddleware(this.offerService, 'Offer', 'id')]});
+    this.addRoute({ path: '/:id/:_id', method: HttpMethod.Delete, handler: this.deleteFromFavourite, middlewares: [new ValidateObjectIdMiddleware('id'), new DocumentExistsMiddleware(this.offerService, 'Offer', 'id')]});
+    this.addRoute({ path: '/favorite/:_id', method: HttpMethod.Get, handler: this.showFavourite });
   }
 
   public async index(_req: Request, res: Response): Promise<void> {
     const offers = await this.offerService.find();
-    this.ok(res, offers);
+    this.created(res, fillDTO(OfferRdoShort, offers));
   }
 
-  public async indexDetailed(_req: Request, res: Response): Promise<void> {
-    const offers = await this.offerService.findDetailed();
-    this.ok(res, offers);
+  public async indexDetailed({ params }: Request<ParamOfferId>, res: Response): Promise<void> {
+    const offers = await this.offerService.findDetailed(params.id);
+    this.ok(res, fillDTO(OfferRdo, offers));
   }
 
   public async create({ body }: CreateOfferRequest, res: Response): Promise<void> {
     const offer = await this.offerService.create(body);
-    this.created(res, fillDTO(OfferRdo, offer));
-    this.logger.info(`Created offer ${body.title} in ${body.city}`);
+    const result = await this.offerService.findById(offer.id);
+    this.created(res, fillDTO(OfferRdo, result));
+    this.logger.info(`Created offer ${offer.title} in ${offer.city}`);
   }
 
   public async update({ params, body }: Request<ParamOfferId, unknown, UpdateOfferDto>, res: Response): Promise<void> {
@@ -76,24 +80,20 @@ export class OfferController extends BaseController {
 
   public async addToFavourite({ params }: Request<ParamFavorite>, res: Response): Promise<void> {
     const favourite = await this.userService.findByIdAndAddToFavourite(params.id, params._id);
-    this.logger.info(`User ${params._id} add offer ${params.id} to favorite`);
+    this.logger.info(`For user ${params._id} add offer ${params.id} to favorite`);
     this.noContent(res, favourite);
   }
 
   public async deleteFromFavourite({ params }: Request<ParamFavorite>, res: Response): Promise<void> {
     const favourite = await this.userService.findByIdAndDeleteFromFavourite(params.id, params._id);
-    this.logger.info(`User ${params._id} delete offer ${params.id} from favorite`);
+    this.logger.info(`For user ${params._id} delete offer ${params.id} from favorite`);
     this.noContent(res, favourite);
   }
 
-
-  ////////////////////
-
-  public async getFavourite({ params }: Request<ParamUser>, res: Response): Promise<void> {
-    console.log(params);
+  public async showFavourite({ params }: Request<ParamUser>, res: Response): Promise<void> {
     const offers = await this.offerService.getFavourite(params._id);
-    this.created(res, fillDTO(OfferRdoShort, offers));
-    this.logger.info(`Favorite offers for ${params._id}`);
+    this.created(res, fillDTO(OfferRdo, offers));
+    this.logger.info(`Favorite offer for ${params._id}`);
   }
 
   // public async updateFavourite({ params }: Request<ParamOfferId>, res: Response): Promise<void> {
@@ -109,8 +109,13 @@ export class OfferController extends BaseController {
     this.logger.info('Offer is deleted');
   }
 
-  public async getPremiumByCity({ params }: Request<ParamCity>, res: Response): Promise<void> {
-    const offersPremiumByCity = await this.offerService.getPremiumByCity(params.city);
+  public async showPremiumByCity({params, query}: Request<ParamCity, unknown, unknown, RequestQuery>, res: Response): Promise<void> {
+    const offersPremiumByCity = await this.offerService.getPremiumByCity(params.city, query.limit);
     this.ok(res, fillDTO(OfferRdoShort, offersPremiumByCity));
   }
+
+  // public async getPremiumByCity({ params }: Request<ParamCity>, res: Response): Promise<void> {
+  //   const offersPremiumByCity = await this.offerService.getPremiumByCity(params.city);
+  //   this.ok(res, fillDTO(OfferRdoShort, offersPremiumByCity));
+  // }
 }

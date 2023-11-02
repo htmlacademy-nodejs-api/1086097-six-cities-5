@@ -26,16 +26,6 @@ export class DefaultUserService implements UserService {
     return this.userModel.findOne({mail});
   }
 
-  public async findOrCreate(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>> {
-    const existedUser = await this.findByEmail(dto.mail);
-
-    if (existedUser) {
-      return existedUser;
-    }
-
-    return this.create(dto, salt);
-  }
-
   public async findByIdAndAddToFavourite(offerId: string, userId: string): Promise<DocumentType<UserEntity> | null> {
     return this.userModel
       .findByIdAndUpdate(userId, {'$push': {favoriteOffers: offerId}}).exec();
