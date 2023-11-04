@@ -11,6 +11,7 @@ enum SchemaDoc {
   DB_PASSWORD = 'Password to connect to the database',
   DB_PORT = 'Port to connect to the database (MongoDB)',
   DB_NAME = 'Database name (MongoDB)',
+  UPLOAD_DIRECTORY = 'Directory for upload files',
 }
 
 export type RestSchema = {
@@ -21,6 +22,7 @@ export type RestSchema = {
   DB_PASSWORD: string;
   DB_PORT: string;
   DB_NAME: string;
+  UPLOAD_DIRECTORY: string;
 }
 
 export const configRestSchema = convict<RestSchema>({
@@ -65,6 +67,12 @@ export const configRestSchema = convict<RestSchema>({
     doc: SchemaDoc.DB_NAME,
     format: String,
     env: 'DB_NAME',
-    default: 'buy-and-sell'
+    default: 'six-data',
   },
+  UPLOAD_DIRECTORY: {
+    doc: SchemaDoc.UPLOAD_DIRECTORY,
+    format: String,
+    env: 'UPLOAD_DIRECTORY',
+    default: null,
+  }
 });

@@ -10,7 +10,7 @@ import { UserService } from './index.js';
 import { Config, RestSchema } from '../../libs/config/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { RequestParams, RequestBody} from '../../types/index.js';
-import { ValidateDtoMiddleware } from '../../libs/rest/index.js';
+import { ValidateDtoMiddleware, ValidateObjectIdMiddleware, UploadFileMiddleware } from '../../libs/rest/index.js';
 
 export type CreateUserRequest = Request<RequestParams, RequestBody, CreateUserDto>;
 export type LoginUserRequest = Request<RequestParams, RequestBody, LoginUserDto>;
@@ -29,6 +29,12 @@ export class UserController extends BaseController {
 
     this.addRoute({ path: '/login', method: HttpMethod.Post, handler: this.login, middlewares: [new ValidateDtoMiddleware(LoginUserDto)] });
     this.addRoute({ path: '/register', method: HttpMethod.Post, handler: this.create, middlewares: [new ValidateDtoMiddleware(CreateUserDto)] });
+    this.addRoute({
+      path: '/:userId/avatar',
+      method: HttpMethod.Post,
+      handler: this.uploadAvatar,
+      middlewares: [new ValidateObjectIdMiddleware('userId'), new UploadFileMiddleware(this.config.get('UPLOAD_DIRECTORY'), 'avatar')],
+    });
   }
 
   public async create({body}: CreateUserRequest, res: Response): Promise<void> {
@@ -64,5 +70,11 @@ export class UserController extends BaseController {
       'Not implemented',
       'UserController',
     );
+  }
+
+  public async uploadAvatar(req: Request, res: Response) {
+    this.created(res, {
+      filepath: req.file?.path
+    });
   }
 }

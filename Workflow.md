@@ -67,7 +67,7 @@ DB_NAME=six-cities - Имя базы данных (MongoDB)
 Выполните команду
 
 ```bash
-npm start:dev
+npm run start:dev
 ```
 
 

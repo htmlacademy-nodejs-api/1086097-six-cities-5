@@ -54,6 +54,8 @@ export class RestApplication {
 
   private async _initExceptionFilters() {
     this.express.use(this.appExceptionFilter.catch.bind(this.appExceptionFilter));
+    this.express.use('/upload', express.static(this.config.get('UPLOAD_DIRECTORY'))
+    );
   }
 
   public async init() {
