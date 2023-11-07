@@ -53,7 +53,7 @@ export const CreateOfferValidationMessage = {
     maxValue: 'Maximum guests amount is 10',
   },
   cost: {
-    invalidFormat: 'cost must be an integer',
+    invalidFormat: 'Cost must be an integer',
     minValue: 'Minimum cost amount is 100',
     maxValue: 'Maximum cost amount is 100000',
   },
@@ -67,7 +67,7 @@ export const CreateOfferValidationMessage = {
     longitude: 'longitude must be a valid date',
   },
   author: {
-    invalidId: 'OfferId field must be a valid id',
+    invalidId: 'Author field must be a valid id',
   },
 } as const;
 

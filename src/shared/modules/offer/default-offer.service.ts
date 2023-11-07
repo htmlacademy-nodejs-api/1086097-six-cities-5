@@ -4,7 +4,7 @@ import { Component, SortType } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { DocumentType, types } from '@typegoose/typegoose';
 import { OfferEntity, CreateOfferDto, UpdateOfferDto } from './index.js';
-import { UserEntity } from '../user/index.js';
+// import { UserEntity } from '../user/index.js';
 import { HttpError } from '../../libs/rest/index.js';
 import { StatusCodes } from 'http-status-codes';
 
@@ -16,15 +16,15 @@ export class DefaultOfferService implements OfferService {
   constructor(
     @inject(Component.Logger) private readonly logger: Logger,
     @inject(Component.OfferModel) private readonly offerModel: types.ModelType<OfferEntity>,
-    @inject(Component.UserModel) private readonly userModel: types.ModelType<UserEntity>
+    // @inject(Component.UserModel) private readonly userModel: types.ModelType<UserEntity>
   ) {}
 
   public async create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>> {
-    const user = await this.userModel.findById(dto.author);
+    // const user = await this.userModel.findById(dto.author);
 
-    if (!user) {
-      throw new HttpError(StatusCodes.BAD_REQUEST, 'This user not exists', 'DefaultUserService');
-    }
+    // if (!user) {
+    //   throw new HttpError(StatusCodes.BAD_REQUEST, 'This user not exists', 'DefaultUserService');
+    // }
 
     const result = await this.offerModel.create(dto);
     this.logger.info(`New offer created: ${dto.title}`);

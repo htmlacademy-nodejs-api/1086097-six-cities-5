@@ -1,6 +1,6 @@
 import { CreateOfferValidationMessage, CoordinatesDto } from './index.js';
-import { Coords, User, ApartmentType, СomfortType } from '../../types/index.js';
-import { IsArray, ValidateNested, IsDateString, ArrayMinSize, ArrayMaxSize, IsEnum, IsInt, IsMongoId, Max, MaxLength, Min, MinLength, IsString, IsBoolean } from 'class-validator';
+import { Coords, ApartmentType, СomfortType } from '../../types/index.js';
+import { IsArray, ValidateNested, IsDateString, ArrayMinSize, ArrayMaxSize, IsEnum, IsInt, Max, MaxLength, Min, MinLength, IsString, IsBoolean } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateOfferDto {
@@ -56,8 +56,8 @@ export class CreateOfferDto {
   @IsEnum(СomfortType, {each: true, message: CreateOfferValidationMessage.comfortType.invalid})
   public comfort: string[];
 
-  @IsMongoId({ message: CreateOfferValidationMessage.author.invalidId })
-  public author: User;
+  // @IsMongoId({ message: CreateOfferValidationMessage.author.invalidId })
+  public author: string;
 
   public commentsCount: number;
 
