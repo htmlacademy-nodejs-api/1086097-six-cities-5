@@ -5,6 +5,8 @@ import { injectable, inject } from 'inversify';
 import { Component } from '../shared/types/component.enum.js';
 import { DatabaseClient } from '../shared/libs/database-client/index.js';
 import { getMongoURI } from '../shared/helpers/database.js';
+import { AuthExceptionFilter } from '../shared/modules/auth/index.js';
+import { ParseTokenMiddleware } from '../shared/libs/rest/index.js';
 
 import express, { Express } from 'express';
 import { Controller, ExceptionFilter } from '../shared/libs/rest/index.js';
@@ -20,6 +22,7 @@ export class RestApplication {
     @inject(Component.OfferController) private readonly оfferController: Controller,
     @inject(Component.UserController) private readonly userController: Controller,
     @inject(Component.ExceptionFilter) private readonly appExceptionFilter: ExceptionFilter,
+    @inject(Component.AuthExceptionFilter) private readonly authExceptionFilter: AuthExceptionFilter,
   ) {
     this.express = express();
   }
@@ -37,7 +40,10 @@ export class RestApplication {
   }
 
   private async _initMiddleware() {
+    const authenticateMiddleware = new ParseTokenMiddleware(this.config.get('JWT_SECRET'));
     this.express.use(express.json());
+    this.express.use('/upload', express.static(this.config.get('UPLOAD_DIRECTORY')));
+    this.express.use(authenticateMiddleware.execute.bind(authenticateMiddleware));
   }
 
   private async _initDb() {
@@ -53,9 +59,8 @@ export class RestApplication {
   }
 
   private async _initExceptionFilters() {
+    this.express.use(this.authExceptionFilter.catch.bind(this.authExceptionFilter));
     this.express.use(this.appExceptionFilter.catch.bind(this.appExceptionFilter));
-    this.express.use('/upload', express.static(this.config.get('UPLOAD_DIRECTORY'))
-    );
   }
 
   public async init() {

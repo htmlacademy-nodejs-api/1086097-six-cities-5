@@ -59,6 +59,10 @@ DB_PORT=27017 - Порт для подключения к базе данных 
 
 DB_NAME=six-cities - Имя базы данных (MongoDB)
 
+UPLOAD_DIRECTORY=upload - директория загрузки файлов
+
+JWT_SECRET=jvtsecret - Секрет для формирования токенов
+
 ```
 
 

@@ -12,6 +12,7 @@ enum SchemaDoc {
   DB_PORT = 'Port to connect to the database (MongoDB)',
   DB_NAME = 'Database name (MongoDB)',
   UPLOAD_DIRECTORY = 'Directory for upload files',
+  JWT_SECRET = 'Secret for JWT',
 }
 
 export type RestSchema = {
@@ -23,6 +24,7 @@ export type RestSchema = {
   DB_PORT: string;
   DB_NAME: string;
   UPLOAD_DIRECTORY: string;
+  JWT_SECRET: string;
 }
 
 export const configRestSchema = convict<RestSchema>({
@@ -73,6 +75,12 @@ export const configRestSchema = convict<RestSchema>({
     doc: SchemaDoc.UPLOAD_DIRECTORY,
     format: String,
     env: 'UPLOAD_DIRECTORY',
+    default: null,
+  },
+  JWT_SECRET: {
+    doc: SchemaDoc.JWT_SECRET,
+    format: String,
+    env: 'JWT_SECRET',
     default: null,
   }
 });

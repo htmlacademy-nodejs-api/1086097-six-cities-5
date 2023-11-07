@@ -1,0 +1,132 @@
+# КОММЕНТАРИИ
+## Получение комментариев по id предложения
+GET http://localhost:5000/comments/6543906d1de6e37dbe9b4c5f HTTP/1.1
+###
+
+
+## Создание комментария
+POST http://localhost:5000/comments HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoidmFseWFAeWEubmV0IiwibmFtZSI6IlZhbHlhIiwiYXZhdGFyIjoiIiwidXNlclR5cGUiOiLQvtCx0YvRh9C90YvQuSIsImlkIjoiNjU0Mzk3NzI2NjQ3ODM5M2E2NjRmNzZjIiwiaWF0IjoxNjk5Mjc4NjgzLCJleHAiOjE2OTk0NTE0ODN9.FM4Etd9FOo8czLZdWvh6BnFOB_ngmJtb-GziJQMNBk0
+Content-Type: application/json
+
+{
+  "text": "this super test comment with token",
+  "rating": 5,
+  "offerId": "654393628639cd2060ff00ca"
+}
+###
+
+
+# ПОЛЬЗОВАТЕЛИ
+## Создать нового пользователя
+POST http://localhost:5000/users/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Valya",
+  "mail": "valya@ya.net",
+  "avatar": "",
+  "userType": "обычный",
+  "password": "123fffff"
+}
+###
+
+## Авторизация  пользователя
+POST http://localhost:5000/users/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "mail": "nick@ya.net",
+  "password": "123fffff"
+}
+###
+
+## Проверка пользователя
+GET http://localhost:5000/users HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6Im5pY2tvbC5wbmciLCJ1c2VyVHlwZSI6InBybyIsImlkIjoiNjU0Mzg4ZjQwM2IzY2EwZmYyYWE5MGI1IiwiaWF0IjoxNjk5Mzc5ODg3LCJleHAiOjE2OTk1NTI2ODd9.7Yoou3sns83WUaJiCojuK3CNg-7PxpJolePyA7vGuoY
+###
+
+## Отправить изображение
+
+POST http://localhost:5000/users/654388f403b3ca0ff2aa90b5/avatar HTTP/1.1
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="avatar"; filename="foto.jpg"
+Content-Type: image/jpeg
+
+< \Users\Nikolay\Desktop\foto.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+# ПРЕДЛОЖЕНИЯ
+## Получение предложений
+GET http://localhost:5000/offers/ HTTP/1.1
+Content-Type: application/json
+
+###
+
+## Получение детального предложения
+GET http://localhost:5000/offers/6543906d1de6e37dbe9b4c5f HTTP/1.1
+
+###
+
+## Получение премиальных предложений по городу
+GET http://localhost:5000/offers/premium/Paris?limit=7 HTTP/1.1
+
+###
+
+## Создание предложения
+POST http://localhost:5000/offers HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6Im5pY2tvbC5wbmciLCJ1c2VyVHlwZSI6InBybyIsImlkIjoiNjU0Mzg4ZjQwM2IzY2EwZmYyYWE5MGI1IiwiaWF0IjoxNjk5Mzc5ODg3LCJleHAiOjE2OTk1NTI2ODd9.7Yoou3sns83WUaJiCojuK3CNg-7PxpJolePyA7vGuoY
+Content-Type: application/json
+
+{
+    "title": "Super Hotel in Amsterdam",
+    "description": "The Flying Pig Downtown Hostel. The Flying Pig Downtown Hostel",
+    "postDate": "2023-10-11T20:08:59.937Z",
+    "city": "Amsterdam",
+    "imagePreview": "amsterdam.jpg",
+    "images": ["amsterdam.jpg", "amsterdam.jpg", "amsterdam.jpg", "amsterdam.jpg", "amsterdam.jpg", "amsterdam.jpg"],
+    "premium": false,
+    "favourite": false,
+    "rating": 0,
+    "apartmentType": "hotel",
+    "roomCount": 2,
+    "guestsCount": 3,
+    "cost": 87100,
+    "comfort": ["Breakfast", "Fridge", "Baby seat"],
+    "commentsCount": 0,
+    "coords": {
+      "latitude": "48.85661",
+      "longitude": "2.351499"
+    }
+}
+###
+
+## Обновление предложения
+PATCH http://localhost:5000/offers/654393628639cd2060ff00ca HTTP/1.1
+Content-Type: application/json
+
+{
+    "title": "New room in center of Paris"
+}
+###
+
+## Удаление предложения
+DELETE http://localhost:5000/offers/653ea51bf1e82a5de37c5763 HTTP/1.1
+###
+
+## Добавление в избранное
+PATCH http://localhost:5000/offers/65393031ea34f7018af34a96/653e452f2e5854b16b023097 HTTP/1.1
+###
+
+## Удаление из избранного
+DELETE  http://localhost:5000/offers/65393031ea34f7018af34a96/653e452f2e5854b16b023097 HTTP/1.1
+###
+
+## Получение избранных по пользователю
+GET  http://localhost:5000/offers/favorite/653e452f2e5854b16b023097 HTTP/1.1
+###
+
