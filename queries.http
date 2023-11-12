@@ -23,39 +23,38 @@ POST http://localhost:5000/users/register HTTP/1.1
 Content-Type: application/json
 
 {
-  "name": "Valya",
-  "mail": "valya@ya.net",
-  "avatar": "",
-  "userType": "обычный",
+  "name": "krrraaab",
+  "mail": "krrraaaba@ya.net",
+  "userType": "pro",
   "password": "123fffff"
 }
 ###
 
-## Авторизация  пользователя
+## Аутентификация  пользователя
 POST http://localhost:5000/users/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "mail": "nick@ya.net",
+  "mail": "nada@ya.net",
   "password": "123fffff"
 }
 ###
 
 ## Проверка пользователя
 GET http://localhost:5000/users HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6Im5pY2tvbC5wbmciLCJ1c2VyVHlwZSI6InBybyIsImlkIjoiNjU0Mzg4ZjQwM2IzY2EwZmYyYWE5MGI1IiwiaWF0IjoxNjk5Mzc5ODg3LCJleHAiOjE2OTk1NTI2ODd9.7Yoou3sns83WUaJiCojuK3CNg-7PxpJolePyA7vGuoY
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6IiIsInVzZXJUeXBlIjoicHJvIiwiaWQiOiI2NTRhM2Y5NWE3NTM3YjZiNTAyMTI0NTUiLCJpYXQiOjE2OTk1MjM2MDAsImV4cCI6MTY5OTY5NjQwMH0.5AZ_xNFaNJduDq8aNC0xPublp8ih2AinL3fC_T5nocc
 ###
 
-## Отправить изображение
-
-POST http://localhost:5000/users/654388f403b3ca0ff2aa90b5/avatar HTTP/1.1
+## Отправить изображение на аватар
+POST http://localhost:5000/users/avatar HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmFkYUB5YS5uZXQiLCJuYW1lIjoiTmFkb21hbiIsImF2YXRhciI6ImRlZmF1bHQtYXZhdGFyLmpwZyIsInVzZXJUeXBlIjoicHJvIiwiaWQiOiI2NTRmYmQ3YjliYjFhZDc3ZWUzMDMzM2UiLCJpYXQiOjE2OTk3NDI1MDcsImV4cCI6MTY5OTkxNTMwN30.Rx0Pf5DJmpo0NZ0JDCiyjXC43AxYg9PrdDm7GR1Xqys
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
-Content-Disposition: form-data; name="avatar"; filename="foto.jpg"
+Content-Disposition: form-data; name="avatar"; filename="foto.jpeg"
 Content-Type: image/jpeg
 
-< \Users\Nikolay\Desktop\foto.jpg
+< /Users/Nikolay/Desktop/foto.jpg
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ###
@@ -79,11 +78,11 @@ GET http://localhost:5000/offers/premium/Paris?limit=7 HTTP/1.1
 
 ## Создание предложения
 POST http://localhost:5000/offers HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6Im5pY2tvbC5wbmciLCJ1c2VyVHlwZSI6InBybyIsImlkIjoiNjU0Mzg4ZjQwM2IzY2EwZmYyYWE5MGI1IiwiaWF0IjoxNjk5Mzc5ODg3LCJleHAiOjE2OTk1NTI2ODd9.7Yoou3sns83WUaJiCojuK3CNg-7PxpJolePyA7vGuoY
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmFkYUB5YS5uZXQiLCJuYW1lIjoiTmFkb21hbiIsImF2YXRhciI6ImRlZmF1bHQtYXZhdGFyLmpwZyIsInVzZXJUeXBlIjoicHJvIiwiaWQiOiI2NTRmYmQ3YjliYjFhZDc3ZWUzMDMzM2UiLCJpYXQiOjE2OTk3NDI1MDcsImV4cCI6MTY5OTkxNTMwN30.Rx0Pf5DJmpo0NZ0JDCiyjXC43AxYg9PrdDm7GR1Xqys
 Content-Type: application/json
 
 {
-    "title": "Super Hotel in Amsterdam",
+    "title": "Raaaaaaaaaaaaaaaaaaaa kaaaaaaaa buuuuum",
     "description": "The Flying Pig Downtown Hostel. The Flying Pig Downtown Hostel",
     "postDate": "2023-10-11T20:08:59.937Z",
     "city": "Amsterdam",
@@ -107,6 +106,7 @@ Content-Type: application/json
 
 ## Обновление предложения
 PATCH http://localhost:5000/offers/654393628639cd2060ff00ca HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6IiIsInVzZXJUeXBlIjoicHJvIiwiaWQiOiI2NTRhM2Y5NWE3NTM3YjZiNTAyMTI0NTUiLCJpYXQiOjE2OTk1MjM2MDAsImV4cCI6MTY5OTY5NjQwMH0.5AZ_xNFaNJduDq8aNC0xPublp8ih2AinL3fC_T5nocc
 Content-Type: application/json
 
 {
@@ -115,18 +115,79 @@ Content-Type: application/json
 ###
 
 ## Удаление предложения
-DELETE http://localhost:5000/offers/653ea51bf1e82a5de37c5763 HTTP/1.1
+DELETE http://localhost:5000/offers/654cdd02ad1e5f8a4e96bd4d HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6IiIsInVzZXJUeXBlIjoicHJvIiwiaWQiOiI2NTRhM2Y5NWE3NTM3YjZiNTAyMTI0NTUiLCJpYXQiOjE2OTk1MjM2MDAsImV4cCI6MTY5OTY5NjQwMH0.5AZ_xNFaNJduDq8aNC0xPublp8ih2AinL3fC_T5nocc
 ###
 
 ## Добавление в избранное
-PATCH http://localhost:5000/offers/65393031ea34f7018af34a96/653e452f2e5854b16b023097 HTTP/1.1
+PATCH http://localhost:5000/offers/654cad0ba30b46e3c29284ae/favorite HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6IiIsInVzZXJUeXBlIjoicHJvIiwiaWQiOiI2NTRhM2Y5NWE3NTM3YjZiNTAyMTI0NTUiLCJpYXQiOjE2OTk1MjM2MDAsImV4cCI6MTY5OTY5NjQwMH0.5AZ_xNFaNJduDq8aNC0xPublp8ih2AinL3fC_T5nocc
 ###
 
 ## Удаление из избранного
-DELETE  http://localhost:5000/offers/65393031ea34f7018af34a96/653e452f2e5854b16b023097 HTTP/1.1
+DELETE  http://localhost:5000/offers/654cad0ba30b46e3c29284ae/favorite HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6IiIsInVzZXJUeXBlIjoicHJvIiwiaWQiOiI2NTRhM2Y5NWE3NTM3YjZiNTAyMTI0NTUiLCJpYXQiOjE2OTk1MjM2MDAsImV4cCI6MTY5OTY5NjQwMH0.5AZ_xNFaNJduDq8aNC0xPublp8ih2AinL3fC_T5nocc
 ###
 
 ## Получение избранных по пользователю
-GET  http://localhost:5000/offers/favorite/653e452f2e5854b16b023097 HTTP/1.1
+GET  http://localhost:5000/offers/favorite/offers HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6IiIsInVzZXJUeXBlIjoicHJvIiwiaWQiOiI2NTRhM2Y5NWE3NTM3YjZiNTAyMTI0NTUiLCJpYXQiOjE2OTk1MjM2MDAsImV4cCI6MTY5OTY5NjQwMH0.5AZ_xNFaNJduDq8aNC0xPublp8ih2AinL3fC_T5nocc
 ###
 
+## Отправить изображения для предложения
+POST http://localhost:5000/offers/6550954d099643a7f1b710da/images HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmFkYUB5YS5uZXQiLCJuYW1lIjoiTmFkb21hbiIsImF2YXRhciI6IlNVSWl0blU3OTJOdkR1MTdZaWVpZy5qcGVnIiwidXNlclR5cGUiOiJwcm8iLCJpZCI6IjY1NGZiZDdiOWJiMWFkNzdlZTMwMzMzZSIsImlhdCI6MTY5OTc4MDQxNiwiZXhwIjoxNjk5OTUzMjE2fQ.rISGHoqvod23-919lxv-v1DprXTS0bjK8bYd7_e0m6E
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="foto.jpeg"
+Content-Type: image/jpeg
+
+< /Users/Nikolay/Desktop/foto.jpg
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="foto2.jpeg"
+Content-Type: image/jpeg
+
+< /Users/Nikolay/Desktop/foto2.jpg
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="foto2.jpeg"
+Content-Type: image/jpeg
+
+< /Users/Nikolay/Desktop/foto2.jpg
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="foto2.jpeg"
+Content-Type: image/jpeg
+
+< /Users/Nikolay/Desktop/foto2.jpg
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="foto2.jpeg"
+Content-Type: image/jpeg
+
+< /Users/Nikolay/Desktop/foto2.jpg
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="images"; filename="foto2.jpeg"
+Content-Type: image/jpeg
+
+< /Users/Nikolay/Desktop/foto2.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+
+## Отправить изображение-первью для предложения
+POST http://localhost:5000/offers/6550954d099643a7f1b710da/preview HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmFkYUB5YS5uZXQiLCJuYW1lIjoiTmFkb21hbiIsImF2YXRhciI6ImRlZmF1bHQtYXZhdGFyLmpwZyIsInVzZXJUeXBlIjoicHJvIiwiaWQiOiI2NTRmYmQ3YjliYjFhZDc3ZWUzMDMzM2UiLCJpYXQiOjE2OTk3NDI1MDcsImV4cCI6MTY5OTkxNTMwN30.Rx0Pf5DJmpo0NZ0JDCiyjXC43AxYg9PrdDm7GR1Xqys
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="imagePreview"; filename="foto.jpeg"
+Content-Type: image/jpeg
+
+< /Users/Nikolay/Desktop/foto.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###

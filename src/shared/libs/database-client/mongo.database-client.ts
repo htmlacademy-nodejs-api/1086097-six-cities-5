@@ -10,7 +10,6 @@ const RETRY_TIMEOUT = 3000;
 
 @injectable()
 export class MongoDatabaseClient implements DatabaseClient {
-  // private mongoose: Mongoose.AggregateOptions;
   private mongoose: typeof Mongoose;
   private isConnected: boolean;
 
@@ -29,9 +28,6 @@ export class MongoDatabaseClient implements DatabaseClient {
     }
 
     this.logger.info('Trying to connect to MongoDB…');
-
-    // this.mongoose = await Mongoose.connect(uri);
-    // this.isConnected = true;
 
     let attempt = 0;
     while (attempt < RETRY_COUNT) {

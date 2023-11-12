@@ -5,8 +5,6 @@ import { Logger } from '../../libs/logger/index.js';
 import { DocumentType, types } from '@typegoose/typegoose';
 import { OfferEntity, CreateOfferDto, UpdateOfferDto } from './index.js';
 // import { UserEntity } from '../user/index.js';
-import { HttpError } from '../../libs/rest/index.js';
-import { StatusCodes } from 'http-status-codes';
 
 const DEFAULT_OFFER_COUNT = 60;
 const PREMIUM_OFFER_LIMIT = 3;
@@ -20,12 +18,6 @@ export class DefaultOfferService implements OfferService {
   ) {}
 
   public async create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>> {
-    // const user = await this.userModel.findById(dto.author);
-
-    // if (!user) {
-    //   throw new HttpError(StatusCodes.BAD_REQUEST, 'This user not exists', 'DefaultUserService');
-    // }
-
     const result = await this.offerModel.create(dto);
     this.logger.info(`New offer created: ${dto.title}`);
     return result;
@@ -133,22 +125,12 @@ export class DefaultOfferService implements OfferService {
   }
 
   public async deleteById(offerId: string): Promise<DocumentType<OfferEntity> | null> {
-    const offer = await this.offerModel.findById(offerId);
-    if (!offer) {
-      throw new HttpError(StatusCodes.BAD_REQUEST, 'This offer not exists', 'DefaultOfferService');
-    }
-
     return this.offerModel
       .findByIdAndDelete(offerId)
       .exec();
   }
 
   public async updateById(offerId: string, dto: UpdateOfferDto): Promise<DocumentType<OfferEntity> | null> {
-    const offer = await this.offerModel.findById(offerId);
-    if (!offer) {
-      throw new HttpError(StatusCodes.BAD_REQUEST, 'This offer not exists', 'DefaultOfferService');
-    }
-
     return this.offerModel
       .findByIdAndUpdate(offerId, dto, {new: true})
       .populate(['author'])
@@ -220,5 +202,10 @@ export class DefaultOfferService implements OfferService {
 
   public async exists(documentId: string): Promise<boolean> {
     return (await this.offerModel.exists({_id: documentId})) !== null;
+  }
+
+  public async isAuthorsOffer(documentId: string, author: string): Promise<boolean> {
+    const isAuthor = await this.offerModel.findOne({ _id: documentId, author: author });
+    return !!isAuthor;
   }
 }
