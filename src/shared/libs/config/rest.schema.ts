@@ -12,7 +12,9 @@ enum SchemaDoc {
   DB_PORT = 'Port to connect to the database (MongoDB)',
   DB_NAME = 'Database name (MongoDB)',
   UPLOAD_DIRECTORY = 'Directory for upload files',
+  STATIC_DIRECTORY_PATH = 'Path to directory with static resources',
   JWT_SECRET = 'Secret for JWT',
+  HOST = 'Host where started service',
 }
 
 export type RestSchema = {
@@ -24,7 +26,9 @@ export type RestSchema = {
   DB_PORT: string;
   DB_NAME: string;
   UPLOAD_DIRECTORY: string;
+  STATIC_DIRECTORY_PATH: string;
   JWT_SECRET: string;
+  HOST: string;
 }
 
 export const configRestSchema = convict<RestSchema>({
@@ -77,10 +81,22 @@ export const configRestSchema = convict<RestSchema>({
     env: 'UPLOAD_DIRECTORY',
     default: null,
   },
+  STATIC_DIRECTORY_PATH: {
+    doc: SchemaDoc.STATIC_DIRECTORY_PATH,
+    format: String,
+    env: 'STATIC_DIRECTORY_PATH',
+    default: 'static',
+  },
   JWT_SECRET: {
     doc: SchemaDoc.JWT_SECRET,
     format: String,
     env: 'JWT_SECRET',
     default: null,
+  },
+  HOST: {
+    doc: SchemaDoc.HOST,
+    format: String,
+    env: 'HOST',
+    default: 'localhost',
   }
 });

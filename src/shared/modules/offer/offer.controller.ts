@@ -1,14 +1,16 @@
 import { inject, injectable } from 'inversify';
 import { Request, Response } from 'express';
-import { BaseController, HttpMethod, ValidateObjectIdMiddleware, PrivateRouteMiddleware, ValidateDtoMiddleware, DocumentExistsMiddleware} from '../../libs/rest/index.js';
+import { BaseController, HttpError, HttpMethod, ValidateObjectIdMiddleware, PrivateRouteMiddleware, ValidateDtoMiddleware, DocumentExistsMiddleware, ValidateAuthorsOfferMiddleware, UploadFileMiddleware} from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
-import { OfferService, CreateOfferDto, OfferRdo, OfferRdoShort, UpdateOfferDto } from './index.js';
+import { OfferService, CreateOfferDto, OfferRdo, OfferRdoShort, UpdateOfferDto, UploadImagesRdo, UploadPreviewRdo } from './index.js';
 import { CommentService } from '../comment/index.js';
 import { UserService } from '../user/index.js';
 import { RequestParams, RequestBody} from '../../types/index.js';
 import { fillDTO } from '../../helpers/index.js';
 import { ParamsDictionary } from 'express-serve-static-core';
+import { Config, RestSchema } from '../../libs/config/index.js';
+import { StatusCodes } from 'http-status-codes';
 
 export type CreateOfferRequest = Request<RequestParams, RequestBody, CreateOfferDto>;
 export type ParamOfferId = {
@@ -23,6 +25,14 @@ export type RequestQuery = {
   limit?: number;
 }
 
+export const ALLOWED_IMAGE_MIME_TYPES = [
+  'image/png',
+  'image/jpeg',
+  'image/jpg'
+];
+
+export const OFFER_IMAGES_AMOUNT = 6;
+
 @injectable()
 export class OfferController extends BaseController {
 
@@ -31,19 +41,97 @@ export class OfferController extends BaseController {
     @inject(Component.OfferService) protected readonly offerService: OfferService,
     @inject(Component.CommentService) private readonly commentService: CommentService,
     @inject(Component.UserService) private readonly userService: UserService,
+    @inject(Component.Config) private readonly configService: Config<RestSchema>,
   ) {
     super(logger);
     this.logger.info('Register routes for OfferController...');
-
     this.addRoute({ path: '/', method: HttpMethod.Get, handler: this.index });
     this.addRoute({ path: '/:id', method: HttpMethod.Get, handler: this.indexDetailed, middlewares: [new ValidateObjectIdMiddleware('id'), new DocumentExistsMiddleware(this.offerService, 'Offer', 'id')] });
     this.addRoute({ path: '/premium/:city', method: HttpMethod.Get, handler: this.showPremiumByCity });
-    this.addRoute({ path: '/', method: HttpMethod.Post, handler: this.create, middlewares: [new PrivateRouteMiddleware, new ValidateDtoMiddleware(CreateOfferDto)]});
-    this.addRoute({ path: '/:id', method: HttpMethod.Delete, handler: this.delete, middlewares: [new PrivateRouteMiddleware, new ValidateObjectIdMiddleware('id'), new DocumentExistsMiddleware(this.offerService, 'Offer', 'id')]});
-    this.addRoute({ path: '/:id', method: HttpMethod.Patch, handler: this.update, middlewares: [new PrivateRouteMiddleware, new ValidateObjectIdMiddleware('id'), new ValidateDtoMiddleware(UpdateOfferDto), new DocumentExistsMiddleware(this.offerService, 'Offer', 'id')] });
-    this.addRoute({ path: '/:id/:_id', method: HttpMethod.Patch, handler: this.addToFavourite, middlewares: [new PrivateRouteMiddleware, new ValidateObjectIdMiddleware('id'), new DocumentExistsMiddleware(this.offerService, 'Offer', 'id')]});
-    this.addRoute({ path: '/:id/:_id', method: HttpMethod.Delete, handler: this.deleteFromFavourite, middlewares: [new PrivateRouteMiddleware, new ValidateObjectIdMiddleware('id'), new DocumentExistsMiddleware(this.offerService, 'Offer', 'id')]});
-    this.addRoute({ path: '/favorite', method: HttpMethod.Get, handler: this.showFavourite, middlewares: [new PrivateRouteMiddleware] });
+    this.addRoute({
+      path: '/',
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [
+        new PrivateRouteMiddleware,
+        new ValidateDtoMiddleware(CreateOfferDto)
+      ],
+    });
+    this.addRoute({
+      path: '/:id',
+      method: HttpMethod.Delete,
+      handler: this.delete,
+      middlewares: [
+        new PrivateRouteMiddleware,
+        new ValidateObjectIdMiddleware('id'),
+        new DocumentExistsMiddleware(this.offerService, 'Offer', 'id'),
+        new ValidateAuthorsOfferMiddleware(this.offerService, 'Offer', 'id')
+      ]
+    });
+    this.addRoute({
+      path: '/:id',
+      method: HttpMethod.Patch,
+      handler: this.update,
+      middlewares: [
+        new PrivateRouteMiddleware,
+        new ValidateObjectIdMiddleware('id'),
+        new ValidateDtoMiddleware(UpdateOfferDto),
+        new DocumentExistsMiddleware(this.offerService, 'Offer', 'id'),
+        new ValidateAuthorsOfferMiddleware(this.offerService, 'Offer', 'id')
+      ]
+    });
+    this.addRoute({ path: '/:id/favorite', method: HttpMethod.Patch, handler: this.addToFavourite, middlewares: [new PrivateRouteMiddleware, new ValidateObjectIdMiddleware('id'), new DocumentExistsMiddleware(this.offerService, 'Offer', 'id')]});
+    this.addRoute({ path: '/:id/favorite', method: HttpMethod.Delete, handler: this.deleteFromFavourite, middlewares: [new PrivateRouteMiddleware, new ValidateObjectIdMiddleware('id'), new DocumentExistsMiddleware(this.offerService, 'Offer', 'id')]});
+    this.addRoute({
+      path: '/favorite/offers',
+      method: HttpMethod.Get,
+      handler: this.showFavourite,
+      middlewares: [new PrivateRouteMiddleware]
+    });
+    this.addRoute({
+      path: '/:id/images',
+      method: HttpMethod.Post,
+      handler: this.uploadImages,
+      middlewares: [
+        new PrivateRouteMiddleware,
+        new ValidateObjectIdMiddleware('id'),
+        new ValidateDtoMiddleware(UpdateOfferDto),
+        new DocumentExistsMiddleware(this.offerService, 'Offer', 'id'),
+        new ValidateAuthorsOfferMiddleware(this.offerService, 'Offer', 'id'),
+        new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'images', ALLOWED_IMAGE_MIME_TYPES, OFFER_IMAGES_AMOUNT),
+      ]
+    });
+    this.addRoute({
+      path: '/:id/preview',
+      method: HttpMethod.Post,
+      handler: this.uploadPreview,
+      middlewares: [
+        new PrivateRouteMiddleware,
+        new ValidateObjectIdMiddleware('id'),
+        new ValidateDtoMiddleware(UpdateOfferDto),
+        new DocumentExistsMiddleware(this.offerService, 'Offer', 'id'),
+        new ValidateAuthorsOfferMiddleware(this.offerService, 'Offer', 'id'),
+        new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'imagePreview', ALLOWED_IMAGE_MIME_TYPES),
+      ]
+    });
+  }
+
+  public async uploadImages({ params, files }: Request<ParamOfferId>, res: Response) {
+    console.log(files);
+    if (!Array.isArray(files)) {
+      throw new HttpError(StatusCodes.INTERNAL_SERVER_ERROR, 'No files were uploaded');
+    }
+
+    const updateDto = {images: files.map((file) => file.filename)};
+    await this.offerService.updateById(params.id, updateDto);
+    this.created(res, fillDTO(UploadImagesRdo, updateDto));
+  }
+
+  public async uploadPreview({ params, file }: Request<ParamOfferId>, res: Response) {
+    console.log(file);
+    const uploadFile = {imagePreview: file?.filename};
+    await this.offerService.updateById(params.id, uploadFile);
+    this.created(res, fillDTO(UploadPreviewRdo, { imagePreview: uploadFile.imagePreview }));
   }
 
   public async index(_req: Request, res: Response): Promise<void> {
@@ -83,7 +171,7 @@ export class OfferController extends BaseController {
 
   public async showFavourite({ tokenPayload }: Request, res: Response): Promise<void> {
     const offers = await this.offerService.getFavourite(tokenPayload.id);
-    this.created(res, fillDTO(OfferRdo, offers));
+    this.created(res, fillDTO(OfferRdoShort, offers));
     this.logger.info(`Favorite offer for ${tokenPayload.id}`);
   }
 

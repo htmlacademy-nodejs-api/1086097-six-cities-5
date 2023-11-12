@@ -43,25 +43,29 @@ npm run ts ./src/main.cli.ts -- --import ./mocks/test-data.tsv admin test localh
 
 
 ```bash
-HOST=localhost - Имя хоста, на котором стартует сервер
+HOST - Имя хоста, на котором стартует сервер
 
-PORT=4000 - Порт для входящих соединений
+PORT - Порт для входящих соединений
 
-SALT=secret - Соль для хэширования паролей
+SALT - Соль для хэширования паролей
 
-DB_HOST=127.0.0.1 - IP-адрес сервера базы данных (MongoDB)
+DB_HOST - IP-адрес сервера базы данных (MongoDB)
 
-DB_USER=admin - Имя пользователя для подключения к базе данных
+DB_USER - Имя пользователя для подключения к базе данных
 
-DB_PASSWORD=test - Пароль для подключения к базе данных
+DB_PASSWORD - Пароль для подключения к базе данных
 
-DB_PORT=27017 - Порт для подключения к базе данных (MongoDB)
+DB_PORT - Порт для подключения к базе данных (MongoDB)
 
-DB_NAME=six-cities - Имя базы данных (MongoDB)
+DB_NAME - Имя базы данных (MongoDB)
 
-UPLOAD_DIRECTORY=upload - директория загрузки файлов
+UPLOAD_DIRECTORY - директория загрузки файлов
 
-JWT_SECRET=jvtsecret - Секрет для формирования токенов
+STATIC_DIRECTORY_PATH - директория статичных файлов
+
+JWT_SECRET - Секрет для формирования токенов
+
+HOST - адрес по которому стартует приложение 
 
 ```
 

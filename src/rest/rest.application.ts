@@ -1,3 +1,5 @@
+import express, { Express } from 'express';
+import cors from 'cors';
 import { Logger } from '../shared/libs/logger/index.js';
 import { LoggerMessage } from '../shared/helpers/const.js';
 import { Config, RestSchema } from '../shared/libs/config/index.js';
@@ -7,8 +9,8 @@ import { DatabaseClient } from '../shared/libs/database-client/index.js';
 import { getMongoURI } from '../shared/helpers/database.js';
 import { AuthExceptionFilter } from '../shared/modules/auth/index.js';
 import { ParseTokenMiddleware } from '../shared/libs/rest/index.js';
-
-import express, { Express } from 'express';
+import { getFullServerPath } from '../shared/helpers/common.js';
+import { STATIC_UPLOAD_ROUTE, STATIC_FILES_ROUTE } from './index.js';
 import { Controller, ExceptionFilter } from '../shared/libs/rest/index.js';
 
 @injectable()
@@ -23,6 +25,8 @@ export class RestApplication {
     @inject(Component.UserController) private readonly userController: Controller,
     @inject(Component.ExceptionFilter) private readonly appExceptionFilter: ExceptionFilter,
     @inject(Component.AuthExceptionFilter) private readonly authExceptionFilter: AuthExceptionFilter,
+    @inject(Component.HttpExceptionFilter) private readonly httpExceptionFilter: ExceptionFilter,
+    @inject(Component.ValidationExceptionFilter) private readonly validationExceptionFilter: ExceptionFilter,
   ) {
     this.express = express();
   }
@@ -30,7 +34,6 @@ export class RestApplication {
   private async _initServer() {
     const port = this.config.get('PORT');
     this.express.listen(port);
-
   }
 
   private async _initControllers() {
@@ -42,8 +45,10 @@ export class RestApplication {
   private async _initMiddleware() {
     const authenticateMiddleware = new ParseTokenMiddleware(this.config.get('JWT_SECRET'));
     this.express.use(express.json());
-    this.express.use('/upload', express.static(this.config.get('UPLOAD_DIRECTORY')));
+    this.express.use(STATIC_UPLOAD_ROUTE, express.static(this.config.get('UPLOAD_DIRECTORY')));
+    this.express.use(STATIC_FILES_ROUTE, express.static(this.config.get('STATIC_DIRECTORY_PATH')));
     this.express.use(authenticateMiddleware.execute.bind(authenticateMiddleware));
+    this.express.use(cors());
   }
 
   private async _initDb() {
@@ -60,6 +65,8 @@ export class RestApplication {
 
   private async _initExceptionFilters() {
     this.express.use(this.authExceptionFilter.catch.bind(this.authExceptionFilter));
+    this.express.use(this.validationExceptionFilter.catch.bind(this.validationExceptionFilter));
+    this.express.use(this.httpExceptionFilter.catch.bind(this.httpExceptionFilter));
     this.express.use(this.appExceptionFilter.catch.bind(this.appExceptionFilter));
   }
 
@@ -84,6 +91,6 @@ export class RestApplication {
 
     this.logger.info('Try to init server...');
     await this._initServer();
-    this.logger.info(`Server started on http://localhost:${this.config.get('PORT')}`);
+    this.logger.info(`🚀 Server started on ${getFullServerPath(this.config.get('HOST'), this.config.get('PORT'))}`);
   }
 }

@@ -3,15 +3,19 @@ import { Request, Response } from 'express';
 import { BaseController, HttpMethod, HttpError } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
-import { UserRdo } from './index.js';
 import { fillDTO } from '../../helpers/index.js';
-import { CreateUserDto, LoginUserDto, LoggedUserRdo } from './index.js';
-import { UserService } from './index.js';
+import { UserService, CreateUserDto, LoginUserDto, UserRdo, LoggedUserRdo, UploadAvatarRdo } from './index.js';
 import { Config, RestSchema } from '../../libs/config/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { RequestParams, RequestBody} from '../../types/index.js';
-import { ValidateDtoMiddleware, ValidateObjectIdMiddleware, UploadFileMiddleware } from '../../libs/rest/index.js';
+import { ValidateDtoMiddleware, PrivateRouteMiddleware, UploadFileMiddleware } from '../../libs/rest/index.js';
 import { AuthService } from '../auth/index.js';
+
+export const ALLOWED_IMAGE_MIME_TYPES = [
+  'image/png',
+  'image/jpeg',
+  'image/jpg'
+];
 
 export type CreateUserRequest = Request<RequestParams, RequestBody, CreateUserDto>;
 export type LoginUserRequest = Request<RequestParams, RequestBody, LoginUserDto>;
@@ -47,11 +51,12 @@ export class UserController extends BaseController {
       middlewares: [new ValidateDtoMiddleware(CreateUserDto)] });
 
     this.addRoute({
-      path: '/:userId/avatar',
+      path: '/avatar',
       method: HttpMethod.Post,
       handler: this.uploadAvatar,
-      middlewares: [new ValidateObjectIdMiddleware('userId'),
-        new UploadFileMiddleware(this.config.get('UPLOAD_DIRECTORY'), 'avatar')],
+      middlewares: [
+        new PrivateRouteMiddleware(),
+        new UploadFileMiddleware(this.config.get('UPLOAD_DIRECTORY'), 'avatar', ALLOWED_IMAGE_MIME_TYPES)],
     });
   }
 
@@ -75,14 +80,17 @@ export class UserController extends BaseController {
   public async login(req: LoginUserRequest, res: Response): Promise<void> {
     const user = await this.authService.verify(req.body);
     const token = await this.authService.authenticate(user);
-    const responseData = fillDTO(LoggedUserRdo, {mail: user.mail, token,});
-    this.ok(res, responseData);
+    // const responseData = fillDTO(LoggedUserRdo, {mail: user.mail, token,});
+    const responseData = fillDTO(LoggedUserRdo, user);
+    this.ok(res, Object.assign(responseData, { token }));
+    // this.ok(res, responseData);
   }
 
-  public async uploadAvatar(req: Request, res: Response) {
-    this.created(res, {
-      filepath: req.file?.path
-    });
+
+  public async uploadAvatar({ tokenPayload, file }: Request, res: Response) {
+    const uploadFile = { avatar: file?.filename };
+    await this.userService.updateById(tokenPayload.id, uploadFile);
+    this.created(res, fillDTO(UploadAvatarRdo, { avatar: uploadFile.avatar }));
   }
 
   public async checkAuthenticate({ tokenPayload }: Request, res: Response) {

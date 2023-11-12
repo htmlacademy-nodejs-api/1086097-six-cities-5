@@ -15,4 +15,5 @@ export interface OfferService extends DocumentExists {
   getFavourite(userId: string): Promise<DocumentType<OfferEntity>[]>;
   getPremiumByCity(city: string, query?: number): Promise<DocumentType<OfferEntity>[]>;
   exists(documentId: string): Promise<boolean>;
+  isAuthorsOffer(offerId: string, author: string): Promise<boolean>;
 }

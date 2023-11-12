@@ -8,3 +8,5 @@ export * from './offer.container.js';
 export * from './offer.controller.js';
 export * from './rdo.offer.js';
 export * from './rdo.offer-short.js';
+export * from './upload-preview.rdo.js';
+export * from './upload-images.rdo.js';

@@ -7,3 +7,5 @@ export * from './user.container.js';
 export * from './user.rdo.js';
 export * from './logged-user.rdo.js';
 export * from './user.controller.js';
+export * from './upload-avatar.rdo.js';
+export * from './update-user.dto.js';

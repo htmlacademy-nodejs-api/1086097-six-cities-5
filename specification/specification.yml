@@ -9,13 +9,13 @@ info:
 tags:
   - name: offers
     description: Действия с предложениями.
-  - name: reviews
+  - name: comments
     description: Действия с комментариями.
   - name: users
     description: Действия с пользователями.
 
 paths:
-  /six-cities/register:
+  /users/register:
     post:
       tags:
        -  users
@@ -42,9 +42,9 @@ paths:
           description: Неправильные регистрационные данные
 
         "409":
-          description: Пользователь с таким email уже существует.
+          description: Пользователь с таким mail уже существует.
 
-  /six-cities/login:
+  /users/login:
    post:
       tags:
        -  users
@@ -69,7 +69,7 @@ paths:
 
         "400":
           description: Неправильный логин или пароль.
-
+  /users:
    get:
       tags:
        -  users
@@ -87,7 +87,7 @@ paths:
         "401":
           description: Пользователь не авторизован.
 
-  /six-cities/logout:
+  /users/logout:
    delete:
       tags:
        -  users
@@ -98,7 +98,7 @@ paths:
         "204":
           description: Сеанс завершен.
 
-  /six-cities/offers/createOffer:
+  /offers/:
     post:
       tags:
         - offers
@@ -127,7 +127,7 @@ paths:
         "401":
           description: Создание предложения возможно только для зарегистрированных пользователей.
 
-  /six-cities/offers/{offerId}/update:
+  /offers/{id}:
     post:
       tags:
         - offers
@@ -135,7 +135,7 @@ paths:
       description: Изменяет существующее предложение от авторизованного пользователя.
 
       parameters:
-        - name: offerId
+        - name: id
           in: path
           schema:
             type: string
@@ -163,7 +163,7 @@ paths:
         "401":
           description: Обновление предложения возможно только для зарегистрированных пользователей.
 
-  /six-cities/offers/{offerId}/delete:
+  /offers/{id}/delete:
     delete:
       tags:
         - offers
@@ -171,7 +171,7 @@ paths:
       description: Удаляет существующее предложение от авторизованного пользователя.
 
       parameters:
-        - name: offerId
+        - name: id
           in: path
           schema:
             type: string
@@ -191,7 +191,7 @@ paths:
         "404":
           description: Запрашиваемые данные не найдены
 
-  /six-cities/offers:
+  /offers:
     get:
       tags:
         - offers
@@ -199,11 +199,11 @@ paths:
       description: Возвращает массив предложений. Каждое предложение описано в виде объекта.
 
       parameters:
-        - name: quantityOffer
+        - name: count
           in: path
           schema:
             type: number
-          required: true
+          required: false
 
       responses:
         "200":
@@ -216,15 +216,15 @@ paths:
         "404":
           description: Запрашиваемые данные не найдены
 
-  /six-cities/offers{offerId}:
+  /offers{id}:
     get:
       tags:
         - offers
       summary: Получить предложение
-      description: Возвращает предложение с идентификатором offerId
+      description: Возвращает предложение с идентификатором id
 
       parameters:
-        - name: offerId
+        - name: id
           in: path
           schema:
             type: string
@@ -241,7 +241,7 @@ paths:
         "404":
           description: Предложение не найдено
 
-  /six-cities/favorite:
+  /offers/favorite:
     get:
       tags:
         - offers
@@ -259,15 +259,15 @@ paths:
         "401":
           description: Просмотр избранных предложений возможен только для зарегистрированных пользователей.
 
-  /six-cities/favorite/{offerId}/{status}:
-    post:
+  /offers/{id}/favorite:
+    patch:
       tags:
         - offers
-      summary: Изменить статус избранного предложения
-      description: Возвращает предложение с идентификатором offerId с актуальным состоянием поля isFavorite.
+      summary: Добавляет в избранное предложение
+      description: Возвращает предложение с идентификатором id с актуальным состоянием поля favorite.
 
       parameters:
-        - name: offerId
+        - name: id
           in: path
           schema:
             type: string
@@ -305,16 +305,61 @@ paths:
         "409":
           description: Приложение уже добавлено в избранное.
 
-  /six-cities/reviews/{offerId}:
-    get:
+    delete:
       tags:
-        - reviews
-
-      summary: Получить список комментариев
-      description: Возвращает список комментариев для предложения с идентификатором offerId.
+        - offers
+      summary: Удаляет из избранного предложение
+      description: Возвращает предложение с идентификатором id с актуальным состоянием поля favorite.
 
       parameters:
-        - name: offerId
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: status
+          in: path
+          schema:
+            type: number
+          required: true
+
+      responses:
+        "200":
+          description: Объект предложения.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offer'
+
+        "201":
+          description: Объект предложения.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/offer'
+
+        "400":
+          description: Ошибка тела запроса.
+
+        "401":
+          description: Пользователь не авторизован.
+
+        "404":
+          description: Предложение не найдено.
+
+        "409":
+          description: Приложение уже добавлено в избранное.
+
+  /comments/{id}:
+    get:
+      tags:
+        - comments
+
+      summary: Получить список комментариев
+      description: Возвращает список комментариев для предложения с идентификатором id.
+
+      parameters:
+        - name: id
           in: path
           schema:
             type: string
@@ -326,20 +371,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/reviews'
+                $ref: '#/components/schemas/comments'
 
         "404":
           description: Предложение не найдено
 
     post:
       tags:
-        - reviews
+        - comments
 
       summary: Добавить новый комментарий
-      description: Добавляет новый комментарий для предложения с идентификатором offerId.
+      description: Добавляет новый комментарий для предложения с идентификатором id.
 
       parameters:
-        - name: offerId
+        - name: id
           in: path
           schema:
             type: string
@@ -351,7 +396,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/review'
+                $ref: '#/components/schemas/comment'
 
         "400":
           description: Ошибка тела запроса
@@ -368,11 +413,11 @@ components:
      type: object
 
      properties:
-        username:
+        name:
           type: string
-          example: John
+          example: Nickolay
 
-        email:
+        mail:
           type: string
           example: mail@mail.com
 
@@ -382,21 +427,21 @@ components:
 
         password:
           type: string
-          example: 123456
+          example: 123456789
 
-        isPro:
-         type: boolean
-         example: false
+        userType:
+          type: string
+          example: обычный
 
     user:
      type: object
 
      properties:
-        username:
+        name:
           type: string
-          example: John
+          example: Nickolay
 
-        email:
+        mail:
           type: string
           example: mail@mail.com
 
@@ -404,9 +449,9 @@ components:
           type: string
           example: avatar.jpg
 
-        isPro:
+        userType:
          type: boolean
-         example: false
+         example: обычный
 
         token:
           type: string
@@ -416,13 +461,13 @@ components:
      type: object
 
      properties:
-        email:
+        mail:
           type: string
           example: mail@mail.com
 
         password:
           type: string
-          example: 123456
+          example: 123456789
 
     createOffer:
      type: object
@@ -434,7 +479,7 @@ components:
         description:
           type: string
           example: 'I am happy to welcome you to my apartment in the city center! Three words: location, cosy and chic!'
-        date:
+        postDate:
           type: string
           example: ISODate('2023-10-04T19:37:06.828Z')
         city:
@@ -452,42 +497,39 @@ components:
                 longitude:
                   type: number
                   example: 4.351697
-                zoom:
-                  type: number
-                  example: 13
         imagePreview:
           type: string
           example: image-9.jpg
         images:
           type: array
           example:  ['image-9.jpg','image-8.jpg','image-5.jpg','image-6.jpg','image-7.jpg','image-12.jpg']
-        isPremium:
+        premium:
           type: boolean
           example: false
-        isFavorite:
+        favourite:
           type: boolean
           example: false
         rating:
           type: number
-          example: 3.2
-        type:
+          example: 3
+        apartmentType:
           type: string
           example: room
-        bedrooms:
+        roomCount:
           type: number
           example: 3
-        maxAdults:
+        guestsCount:
           type: number
           example: 3
-        price:
+        cost:
           type: number
           example: 52866
-        goods:
+        comfort:
           type: array
           example: ['Washer','Towels','Fridge']
-        hostId:
-          type: string
-          example: 65245ce712734e5eb67b7410
+        commentsCount:
+          type: number
+          example: 0
         location:
           type: object
           example:
@@ -497,9 +539,6 @@ components:
             longitude:
               type: number
               example: 6.943974
-            zoom:
-              type: number
-              example: 16
 
     offer:
      type: object
@@ -511,7 +550,7 @@ components:
         description:
           type: string
           example: 'I am happy to welcome you to my apartment in the city center! Three words: location, cosy and chic!'
-        date:
+        postDate:
           type: string
           example: ISODate('2023-10-04T19:37:06.828Z')
         city:
@@ -529,43 +568,40 @@ components:
                 longitude:
                   type: number
                   example: 4.351697
-                zoom:
-                  type: number
-                  example: 13
         imagePreview:
           type: string
           example: image-9.jpg
         images:
           type: array
           example:  ['image-9.jpg','image-8.jpg','image-5.jpg','image-6.jpg','image-7.jpg','image-12.jpg']
-        isPremium:
+        premium:
           type: boolean
           example: false
-        isFavorite:
+        favourite:
           type: boolean
           example: false
         rating:
           type: number
-          example: 3.2
+          example: 3
         type:
           type: string
           example: room
-        bedrooms:
+        roomCount:
           type: number
           example: 3
-        maxAdults:
+        guestsCount:
           type: number
           example: 3
-        price:
+        cost:
           type: number
           example: 52866
-        goods:
+        comfort:
           type: array
           example: ['Washer','Towels','Fridge']
-        hostId:
+        id:
           type: string
           example: 65245ce712734e5eb67b7410
-        reviewCount:
+        commentsCount:
           type: number
           example: 1
         location:
@@ -577,9 +613,6 @@ components:
             longitude:
               type: number
               example: 6.943974
-            zoom:
-              type: number
-              example: 16
 
     offers:
      type: array
@@ -588,7 +621,7 @@ components:
         title:
           type: string
           example: Nice, cozy, warm big bed apartment
-        date:
+        postDate:
           type: string
           example: ISODate('2023-10-04T19:37:06.828Z')
         city:
@@ -606,16 +639,16 @@ components:
                 longitude:
                   type: number
                   example: 4.351697
-                zoom:
-                  type: number
-                  example: 13
         imagePreview:
           type: string
           example: image-9.jpg
-        isPremium:
+        images:
+          type: array
+          example:  ['image-9.jpg','image-8.jpg','image-5.jpg','image-6.jpg','image-7.jpg','image-12.jpg']
+        premium:
           type: boolean
           example: false
-        isFavorite:
+        favourite:
           type: boolean
           example: false
         rating:
@@ -624,10 +657,10 @@ components:
         type:
           type: string
           example: room
-        price:
+        cost:
           type: number
           example: 52866
-        reviewCount:
+        commentsCount:
           type: number
           example: 1
         location:
@@ -639,40 +672,37 @@ components:
             longitude:
               type: number
               example: 6.943974
-            zoom:
-              type: number
-              example: 16
 
-    reviews:
+    comments:
      type: array
 
      properties:
       text:
         type: string
         example: 'We loved it so much, the house, the view, the location just great.. Highly recommend :)'
-      date:
-        type: string
-        example: 2023-09-19T21:00:00.506Z
       rating:
         type: number
-        example: 3.2
-      user:
+        example: 3
+      userId:
         type: string
-        example: 7911a1e0-b7f6-4c18-a83b-b1af7212fccc
+        example: 654388f403b3ca0ff2aa90b5
+      offerId:
+        type: string
+        example: 6543906d1de6e37dbe9b4c5f
 
-    review:
+    comment:
      type: object
 
      properties:
       text:
         type: string
         example: 'We loved it so much, the house, the view, the location just great.. Highly recommend :)'
-      date:
-        type: string
-        example: 2023-09-19T21:00:00.506Z
       rating:
         type: number
-        example: 3.2
-      user:
+        example: 3
+      userId:
         type: string
-        example: 7911a1e0-b7f6-4c18-a83b-b1af7212fccc
+        example: 654388f403b3ca0ff2aa90b5
+      offerId:
+        type: string
+        example: 6543906d1de6e37dbe9b4c5f

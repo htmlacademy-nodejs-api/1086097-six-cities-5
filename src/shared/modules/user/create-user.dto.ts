@@ -1,5 +1,5 @@
 import { UserType } from '../../types/index.js';
-import { IsOptional, Length, IsEmail, IsEnum, MaxLength, MinLength, IsString } from 'class-validator';
+import { Length, IsEmail, IsEnum, MaxLength, MinLength, IsString } from 'class-validator';
 
 const CreateUserValidationMessage = {
   name: {
@@ -26,9 +26,6 @@ export class CreateUserDto {
 
   @IsEmail({}, {message: CreateUserValidationMessage.mail.invalidFormat})
   public mail: string;
-
-  @IsOptional()
-  public avatar?: string;
 
   @IsEnum(UserType, { message: CreateUserValidationMessage.userType.invalidFormat })
   public userType: UserType;

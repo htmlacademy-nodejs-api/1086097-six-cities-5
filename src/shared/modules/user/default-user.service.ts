@@ -1,10 +1,10 @@
 import { inject, injectable} from 'inversify';
-import { UserService } from './index.js';
 import { DocumentType, types } from '@typegoose/typegoose';
-import { UserEntity } from './index.js';
-import { CreateUserDto } from './index.js';
+import { UserEntity, UserService, CreateUserDto, UpdateUserDto } from './index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/component.enum.js';
+
+const DEFAULT_AVATAR_FILE_NAME = 'default-avatar.jpg';
 
 @injectable()
 export class DefaultUserService implements UserService {
@@ -15,7 +15,7 @@ export class DefaultUserService implements UserService {
   ) {}
 
   public async create(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>> {
-    const user = new UserEntity(dto);
+    const user = new UserEntity({...dto, avatar: DEFAULT_AVATAR_FILE_NAME});
     user.setPassword(dto.password, salt);
     const result = await this.userModel.create(user);
     this.logger.info(`New user created: ${user.mail}`);
@@ -24,6 +24,10 @@ export class DefaultUserService implements UserService {
 
   public async findByEmail(mail: string): Promise<DocumentType<UserEntity> | null> {
     return this.userModel.findOne({mail});
+  }
+
+  public async updateById(id: string, dto: UpdateUserDto,): Promise<DocumentType<UserEntity> | null> {
+    return this.userModel.findByIdAndUpdate(id, dto, { new: true }).exec();
   }
 
   public async findByIdAndAddToFavourite(offerId: string, userId: string): Promise<DocumentType<UserEntity> | null> {

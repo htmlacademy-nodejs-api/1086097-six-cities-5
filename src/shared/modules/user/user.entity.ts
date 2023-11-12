@@ -15,7 +15,7 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
   @prop({required: true, unique: true, match: [/^([\w-\\.]+@([\w-]+\.)+[\w-]{2,4})?$/, 'Email is incorrect']})
   public mail: string;
 
-  @prop({default: 'defaultavatar.jpg'})
+  @prop()
   public avatar?: string;
 
   @prop({default: [], type: [String]})
@@ -31,7 +31,7 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
     super();
     this.name = userData.name;
     this.mail = userData.mail;
-    this.avatar = userData.avatar;
+    this.avatar = userData?.avatar;
     this.userType = userData.userType;
   }
 
