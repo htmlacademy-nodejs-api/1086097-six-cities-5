@@ -5,7 +5,7 @@ export type RequestBody = Record<string, unknown>;
 
 export enum UserType {
   PRO = 'pro',
-  SIMPLE = 'обычный',
+  SIMPLE = 'regular',
 }
 
 export enum SortType {
@@ -32,9 +32,9 @@ export enum ApartmentType {
 
 export type User = {
   name: string;
-  mail: string;
+  email: string;
   avatar?: string;
-  userType: UserType;
+  type: UserType;
   password: string;
 }
 

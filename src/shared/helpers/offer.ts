@@ -28,9 +28,9 @@ export function createOffer(offerData: string): Offer {
 
   const author = {
     name: authorName,
-    mail: authorMail,
+    email: authorMail,
     avatar: authorAvatar,
-    userType: UserType[authorType as 'PRO' | 'SIMPLE'],
+    type: UserType[authorType as 'PRO' | 'SIMPLE'],
     password: '',
   };
 

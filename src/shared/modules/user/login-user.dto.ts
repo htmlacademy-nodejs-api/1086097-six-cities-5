@@ -1,7 +1,7 @@
 import { Length, IsEmail, IsString} from 'class-validator';
 
 const CreateUserValidationMessage = {
-  mail: {
+  email: {
     invalidFormat: 'Mail must be a valid',
   },
   password: {
@@ -10,8 +10,8 @@ const CreateUserValidationMessage = {
 };
 
 export class LoginUserDto {
-  @IsEmail({}, {message: CreateUserValidationMessage.mail.invalidFormat})
-  public mail: string;
+  @IsEmail({}, {message: CreateUserValidationMessage.email.invalidFormat})
+  public email: string;
 
   @IsString()
   @Length(6, 12, { message: CreateUserValidationMessage.password.invalidFormat })

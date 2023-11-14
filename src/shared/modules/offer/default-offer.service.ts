@@ -4,7 +4,6 @@ import { Component, SortType } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { DocumentType, types } from '@typegoose/typegoose';
 import { OfferEntity, CreateOfferDto, UpdateOfferDto } from './index.js';
-// import { UserEntity } from '../user/index.js';
 
 const DEFAULT_OFFER_COUNT = 60;
 const PREMIUM_OFFER_LIMIT = 3;
@@ -14,7 +13,6 @@ export class DefaultOfferService implements OfferService {
   constructor(
     @inject(Component.Logger) private readonly logger: Logger,
     @inject(Component.OfferModel) private readonly offerModel: types.ModelType<OfferEntity>,
-    // @inject(Component.UserModel) private readonly userModel: types.ModelType<UserEntity>
   ) {}
 
   public async create(dto: CreateOfferDto): Promise<DocumentType<OfferEntity>> {
@@ -118,7 +116,7 @@ export class DefaultOfferService implements OfferService {
             postDate: '$createdAt',
           }
         },
-        { $unset: ['roomCount', 'guestsCount', 'coords', 'updatedAt', 'createdAt', 'author', 'images', 'description', '_id', '__v']},
+        { $unset: ['_id', '__v']},
         { $limit: limit }
       ])
       .exec();

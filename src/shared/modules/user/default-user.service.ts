@@ -18,12 +18,12 @@ export class DefaultUserService implements UserService {
     const user = new UserEntity({...dto, avatar: DEFAULT_AVATAR_FILE_NAME});
     user.setPassword(dto.password, salt);
     const result = await this.userModel.create(user);
-    this.logger.info(`New user created: ${user.mail}`);
+    this.logger.info(`New user created: ${user.email}`);
     return result;
   }
 
-  public async findByEmail(mail: string): Promise<DocumentType<UserEntity> | null> {
-    return this.userModel.findOne({mail});
+  public async findByEmail(email: string): Promise<DocumentType<UserEntity> | null> {
+    return this.userModel.findOne({email});
   }
 
   public async updateById(id: string, dto: UpdateUserDto,): Promise<DocumentType<UserEntity> | null> {

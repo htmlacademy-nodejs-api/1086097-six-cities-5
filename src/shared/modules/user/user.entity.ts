@@ -13,7 +13,7 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
   public name: string;
 
   @prop({required: true, unique: true, match: [/^([\w-\\.]+@([\w-]+\.)+[\w-]{2,4})?$/, 'Email is incorrect']})
-  public mail: string;
+  public email: string;
 
   @prop()
   public avatar?: string;
@@ -22,7 +22,7 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
   public favoriteOffers: string[];
 
   @prop({required: true, type: () => String, enum: UserType})
-  public userType: UserType;
+  public type: UserType;
 
   @prop({required: true})
   public password: string;
@@ -30,9 +30,9 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
   constructor(userData: User) {
     super();
     this.name = userData.name;
-    this.mail = userData.mail;
+    this.email = userData.email;
     this.avatar = userData?.avatar;
-    this.userType = userData.userType;
+    this.type = userData.type;
   }
 
   public setPassword(password: string, salt: string) {
