@@ -1,6 +1,5 @@
 .vscode/
 /node_modules/
-./frontend-six-cities/node_modules/
 /build/
 /lib/
 /dist/
