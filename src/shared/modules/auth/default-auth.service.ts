@@ -25,14 +25,14 @@ export class DefaultAuthService implements AuthService {
     const jwtSecret = this.config.get('JWT_SECRET');
     const secretKey = crypto.createSecretKey(jwtSecret, 'utf-8');
     const tokenPayload: TokenPayload = {
-      mail: user.mail,
+      email: user.email,
       name: user.name,
       avatar: user.avatar,
-      userType: user.userType,
+      type: user.type,
       id: user._id.toString(),
     };
 
-    this.logger.info(`Create token for ${user.mail}`);
+    this.logger.info(`Create token for ${user.email}`);
     return new SignJWT(tokenPayload)
       .setProtectedHeader({ alg: JWT_ALGORITHM })
       .setIssuedAt()
@@ -41,14 +41,14 @@ export class DefaultAuthService implements AuthService {
   }
 
   public async verify(dto: LoginUserDto): Promise<UserEntity> {
-    const user = await this.userService.findByEmail(dto.mail);
+    const user = await this.userService.findByEmail(dto.email);
     if (! user) {
-      this.logger.warn(`User with ${dto.mail} not found`);
+      this.logger.warn(`User with ${dto.email} not found`);
       throw new UserNotFoundException();
     }
 
     if (! user.verifyPassword(dto.password, this.config.get('SALT'))) {
-      this.logger.warn(`Incorrect password for ${dto.mail}`);
+      this.logger.warn(`Incorrect password for ${dto.email}`);
       throw new UserPasswordIncorrectException();
     }
 

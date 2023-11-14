@@ -35,7 +35,7 @@ POST http://localhost:5000/users/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "mail": "nada@ya.net",
+  "mail": "nick@ya.net",
   "password": "123fffff"
 }
 ###
@@ -119,19 +119,19 @@ DELETE http://localhost:5000/offers/654cdd02ad1e5f8a4e96bd4d HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6IiIsInVzZXJUeXBlIjoicHJvIiwiaWQiOiI2NTRhM2Y5NWE3NTM3YjZiNTAyMTI0NTUiLCJpYXQiOjE2OTk1MjM2MDAsImV4cCI6MTY5OTY5NjQwMH0.5AZ_xNFaNJduDq8aNC0xPublp8ih2AinL3fC_T5nocc
 ###
 
-## Добавление в избранное
-PATCH http://localhost:5000/offers/654cad0ba30b46e3c29284ae/favorite HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6IiIsInVzZXJUeXBlIjoicHJvIiwiaWQiOiI2NTRhM2Y5NWE3NTM3YjZiNTAyMTI0NTUiLCJpYXQiOjE2OTk1MjM2MDAsImV4cCI6MTY5OTY5NjQwMH0.5AZ_xNFaNJduDq8aNC0xPublp8ih2AinL3fC_T5nocc
+## Добавление предложения в избранное
+PATCH http://localhost:5000/offers/6543906d1de6e37dbe9b4c5f/favorite HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6Im5pY2tvbC5wbmciLCJ1c2VyVHlwZSI6InBybyIsImlkIjoiNjU0Mzg4ZjQwM2IzY2EwZmYyYWE5MGI1IiwiaWF0IjoxNjk5ODk1OTE0LCJleHAiOjE3MDAwNjg3MTR9.oY0DIezZr4IcALOwUq91xufI0zba51vTPnS2r29BeNs
 ###
 
-## Удаление из избранного
-DELETE  http://localhost:5000/offers/654cad0ba30b46e3c29284ae/favorite HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6IiIsInVzZXJUeXBlIjoicHJvIiwiaWQiOiI2NTRhM2Y5NWE3NTM3YjZiNTAyMTI0NTUiLCJpYXQiOjE2OTk1MjM2MDAsImV4cCI6MTY5OTY5NjQwMH0.5AZ_xNFaNJduDq8aNC0xPublp8ih2AinL3fC_T5nocc
+## Удаление предложения из избранного
+DELETE  http://localhost:5000/offers/6543906d1de6e37dbe9b4c5f/favorite HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6Im5pY2tvbC5wbmciLCJ1c2VyVHlwZSI6InBybyIsImlkIjoiNjU0Mzg4ZjQwM2IzY2EwZmYyYWE5MGI1IiwiaWF0IjoxNjk5ODk1OTE0LCJleHAiOjE3MDAwNjg3MTR9.oY0DIezZr4IcALOwUq91xufI0zba51vTPnS2r29BeNs
 ###
 
-## Получение избранных по пользователю
+## Получение избранных предложений по пользователю
 GET  http://localhost:5000/offers/favorite/offers HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6IiIsInVzZXJUeXBlIjoicHJvIiwiaWQiOiI2NTRhM2Y5NWE3NTM3YjZiNTAyMTI0NTUiLCJpYXQiOjE2OTk1MjM2MDAsImV4cCI6MTY5OTY5NjQwMH0.5AZ_xNFaNJduDq8aNC0xPublp8ih2AinL3fC_T5nocc
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6Im5pY2tvbC5wbmciLCJ1c2VyVHlwZSI6InBybyIsImlkIjoiNjU0Mzg4ZjQwM2IzY2EwZmYyYWE5MGI1IiwiaWF0IjoxNjk5ODk1OTE0LCJleHAiOjE3MDAwNjg3MTR9.oY0DIezZr4IcALOwUq91xufI0zba51vTPnS2r29BeNs
 ###
 
 ## Отправить изображения для предложения

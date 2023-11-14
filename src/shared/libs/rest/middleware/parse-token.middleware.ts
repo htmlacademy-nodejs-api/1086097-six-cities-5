@@ -10,10 +10,10 @@ import { JWTPayload } from 'jose';
 function isTokenPayload(payload: JWTPayload): payload is TokenPayload {
   return (
     typeof payload === 'object' && payload !== null &&
-    'mail' in payload && typeof payload.mail === 'string' &&
+    'email' in payload && typeof payload.email === 'string' &&
     'name' in payload && typeof payload.name === 'string' &&
     'avatar' in payload && typeof payload?.avatar === 'string' &&
-    'userType' in payload && typeof payload.userType === 'string' &&
+    'type' in payload && typeof payload.type === 'string' &&
     'id' in payload && typeof payload.id === 'string'
   );
 }

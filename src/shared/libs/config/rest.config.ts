@@ -9,7 +9,6 @@ import { Component } from '../../types/component.enum.js';
 
 @injectable()
 export class RestConfig implements Config<RestSchema> {
-  // private readonly config: NodeJS.ProcessEnv;
   private readonly config: RestSchema;
 
   constructor (@inject(Component.Logger) private readonly logger: Logger){
@@ -19,11 +18,8 @@ export class RestConfig implements Config<RestSchema> {
       throw new Error(LoggerMessage.NOT_READ_ENV);
     }
 
-    // this.config = <DotenvParseOutput>parsedOutput.parsed;
-
     // считывание значений из .env
     configRestSchema.load({});
-    //   configRestSchema.validate({ allowed: 'strict', output: this.logger.info });
     try {
       configRestSchema.validate({ allowed: 'strict'});
     } catch {

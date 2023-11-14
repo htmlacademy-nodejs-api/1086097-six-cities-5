@@ -58,15 +58,24 @@ export class UserController extends BaseController {
         new PrivateRouteMiddleware(),
         new UploadFileMiddleware(this.config.get('UPLOAD_DIRECTORY'), 'avatar', ALLOWED_IMAGE_MIME_TYPES)],
     });
+    this.addRoute({
+      path: '/logout',
+      method: HttpMethod.Delete,
+      handler: this.logout,
+    });
+  }
+
+  public async logout(_req: Request, res: Response): Promise<void> {
+    this.ok(res, {});
   }
 
   public async create({body}: CreateUserRequest, res: Response): Promise<void> {
-    const existsUser = await this.userService.findByEmail(body.mail);
+    const existsUser = await this.userService.findByEmail(body.email);
 
     if (existsUser) {
       throw new HttpError(
         StatusCodes.CONFLICT,
-        `User with email ${body.mail} exists.`,
+        `User with email ${body.email} exists.`,
         'UserController'
       );
     }
@@ -74,16 +83,15 @@ export class UserController extends BaseController {
     const salt = this.config.get('SALT');
     const user = await this.userService.create(body, salt);
     this.created(res, fillDTO(UserRdo, user));
-    this.logger.info(`Created user ${body.mail}`);
+    this.logger.info(`Created user ${body.email}`);
   }
 
   public async login(req: LoginUserRequest, res: Response): Promise<void> {
     const user = await this.authService.verify(req.body);
     const token = await this.authService.authenticate(user);
-    // const responseData = fillDTO(LoggedUserRdo, {mail: user.mail, token,});
+    // const responseData = fillDTO(LoggedUserRdo, {email: user.email, token,});
     const responseData = fillDTO(LoggedUserRdo, user);
     this.ok(res, Object.assign(responseData, { token }));
-    // this.ok(res, responseData);
   }
 
 
@@ -94,7 +102,7 @@ export class UserController extends BaseController {
   }
 
   public async checkAuthenticate({ tokenPayload }: Request, res: Response) {
-    const user = tokenPayload && await this.userService.findByEmail(tokenPayload.mail);
+    const user = tokenPayload && await this.userService.findByEmail(tokenPayload.email);
 
     if (!user) {
       throw new HttpError(

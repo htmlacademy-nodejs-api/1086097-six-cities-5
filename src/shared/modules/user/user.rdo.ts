@@ -5,11 +5,11 @@ export class UserRdo {
   public name: string;
 
   @Expose()
-  public mail: string;
+  public email: string;
 
   @Expose()
   public avatar?: string;
 
   @Expose()
-  public userType: string;
+  public type: string;
 }

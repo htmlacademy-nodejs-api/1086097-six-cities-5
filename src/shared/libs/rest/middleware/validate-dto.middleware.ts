@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { ClassConstructor, plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
-// import { StatusCodes } from 'http-status-codes';
 import { Middleware } from './middleware.interface.js';
 import { ValidationError } from '../index.js';
 import { reduceValidationErrors } from '../../../helpers/common.js';
@@ -14,14 +13,7 @@ export class ValidateDtoMiddleware implements Middleware {
     const errors = await validate(dtoInstance);
 
     if (errors.length > 0) {
-      // res.status(StatusCodes.BAD_REQUEST).send(errors);
       throw new ValidationError(`Validation error: ${path}`, reduceValidationErrors(errors));
-
-      // throw new HttpError(
-      //   StatusCodes.BAD_REQUEST,
-      //   'is invalid Data',
-      //   'ValidateObjectIdMiddleware'
-      // );
     }
 
     next();

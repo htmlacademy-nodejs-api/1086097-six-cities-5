@@ -55,6 +55,9 @@ export class OfferRdo {
   @Expose()
   public coords: Coords;
 
+  @Expose()
+  public id: string;
+
   // @Expose()
   // public favorites?: string[];
 }
