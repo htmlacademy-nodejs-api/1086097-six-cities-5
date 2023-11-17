@@ -1,4 +1,5 @@
 import { IsInt, Min, Max, IsMongoId, MaxLength, MinLength } from 'class-validator';
+import { RATING, TEXT_LENGTH } from '../index.js';
 
 const CreateCommentValidationMessage = {
   text: {
@@ -17,13 +18,13 @@ const CreateCommentValidationMessage = {
 };
 
 export class CreateCommentDto {
-  @MinLength(5, {message: CreateCommentValidationMessage.text.minLength})
-  @MaxLength(1024, {message: CreateCommentValidationMessage.text.maxLength})
+  @MinLength(TEXT_LENGTH.MIN, {message: CreateCommentValidationMessage.text.minLength})
+  @MaxLength(TEXT_LENGTH.MAX, {message: CreateCommentValidationMessage.text.maxLength})
   public text: string;
 
   @IsInt({ message: CreateCommentValidationMessage.rating.invalidFormat })
-  @Min(1, { message: CreateCommentValidationMessage.rating.min })
-  @Max(5, { message: CreateCommentValidationMessage.rating.max })
+  @Min(RATING.MIN, { message: CreateCommentValidationMessage.rating.min })
+  @Max(RATING.MAX, { message: CreateCommentValidationMessage.rating.max })
   public rating: number;
 
   @IsMongoId({ message: CreateCommentValidationMessage.offerId.invalidFormat })

@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import { BaseController, HttpError, HttpMethod, ValidateObjectIdMiddleware, PrivateRouteMiddleware, ValidateDtoMiddleware, DocumentExistsMiddleware, ValidateAuthorsOfferMiddleware, UploadFileMiddleware} from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
-import { OfferService, CreateOfferDto, OfferRdo, OfferRdoShort, UpdateOfferDto, UploadImagesRdo, UploadPreviewRdo } from './index.js';
+import { OfferService, CreateOfferDto, OfferRdo, OfferRdoShort, UpdateOfferDto, UploadImagesRdo, UploadPreviewRdo, OFFER_IMAGES_AMOUNT, ALLOWED_IMAGE_MIME_TYPES } from './index.js';
 import { CommentService } from '../comment/index.js';
 import { UserService } from '../user/index.js';
 import { RequestParams, RequestBody} from '../../types/index.js';
@@ -24,14 +24,6 @@ export type ParamCity = {
 export type RequestQuery = {
   limit?: number;
 }
-
-export const ALLOWED_IMAGE_MIME_TYPES = [
-  'image/png',
-  'image/jpeg',
-  'image/jpg'
-];
-
-export const OFFER_IMAGES_AMOUNT = 6;
 
 @injectable()
 export class OfferController extends BaseController {

@@ -1,3 +1,4 @@
+export * from './auth.constant.js';
 export * from './auth-service.interface.js';
 export * from './default-auth.service.js';
 export * from './error/user-not-found.exception.js';

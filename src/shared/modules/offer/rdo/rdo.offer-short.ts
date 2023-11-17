@@ -1,5 +1,5 @@
 import { Expose } from 'class-transformer';
-import { Coords } from '../../types/index.js';
+import { Coords } from '../../../types/index.js';
 
 export class OfferRdoShort {
   @Expose()

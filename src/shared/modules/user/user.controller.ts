@@ -4,18 +4,12 @@ import { BaseController, HttpMethod, HttpError } from '../../libs/rest/index.js'
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
 import { fillDTO } from '../../helpers/index.js';
-import { UserService, CreateUserDto, LoginUserDto, UserRdo, LoggedUserRdo, UploadAvatarRdo } from './index.js';
+import { UserService, CreateUserDto, LoginUserDto, UserRdo, LoggedUserRdo, UploadAvatarRdo, ALLOWED_IMAGE_MIME_TYPES } from './index.js';
 import { Config, RestSchema } from '../../libs/config/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { RequestParams, RequestBody} from '../../types/index.js';
 import { ValidateDtoMiddleware, PrivateRouteMiddleware, UploadFileMiddleware } from '../../libs/rest/index.js';
 import { AuthService } from '../auth/index.js';
-
-export const ALLOWED_IMAGE_MIME_TYPES = [
-  'image/png',
-  'image/jpeg',
-  'image/jpg'
-];
 
 export type CreateUserRequest = Request<RequestParams, RequestBody, CreateUserDto>;
 export type LoginUserRequest = Request<RequestParams, RequestBody, LoginUserDto>;

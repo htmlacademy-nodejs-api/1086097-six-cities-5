@@ -1,6 +1,6 @@
 import { Expose, Type } from 'class-transformer';
-import { Coords } from '../../types/index.js';
-import { UserRdo } from '../user/index.js';
+import { Coords } from '../../../types/index.js';
+import { UserRdo } from '../../user/index.js';
 
 export class OfferRdo {
   @Expose()
