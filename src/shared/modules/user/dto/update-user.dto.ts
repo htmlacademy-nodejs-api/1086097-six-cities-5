@@ -1,4 +1,4 @@
-import { UserType } from '../../types/index.js';
+import { UserType } from '../../../types/index.js';
 
 export class UpdateUserDto {
   public avatar?: string;

@@ -1,10 +1,8 @@
 import { inject, injectable} from 'inversify';
 import { DocumentType, types } from '@typegoose/typegoose';
-import { UserEntity, UserService, CreateUserDto, UpdateUserDto } from './index.js';
+import { UserEntity, UserService, CreateUserDto, UpdateUserDto, DEFAULT_AVATAR_FILE_NAME } from './index.js';
 import { Logger } from '../../libs/logger/index.js';
-import { Component } from '../../types/component.enum.js';
-
-const DEFAULT_AVATAR_FILE_NAME = 'default-avatar.jpg';
+import { Component } from '../../types/index.js';
 
 @injectable()
 export class DefaultUserService implements UserService {

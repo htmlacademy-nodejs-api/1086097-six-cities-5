@@ -3,10 +3,7 @@ import { OfferService } from './offer-service.interface.js';
 import { Component, SortType } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { DocumentType, types } from '@typegoose/typegoose';
-import { OfferEntity, CreateOfferDto, UpdateOfferDto } from './index.js';
-
-const DEFAULT_OFFER_COUNT = 60;
-const PREMIUM_OFFER_LIMIT = 3;
+import { OfferEntity, CreateOfferDto, UpdateOfferDto, DEFAULT_OFFER_COUNT, PREMIUM_OFFER_LIMIT } from './index.js';
 
 @injectable()
 export class DefaultOfferService implements OfferService {

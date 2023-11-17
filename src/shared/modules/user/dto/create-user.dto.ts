@@ -1,5 +1,6 @@
-import { UserType } from '../../types/index.js';
+import { UserType } from '../../../types/index.js';
 import { Length, IsEmail, IsEnum, MaxLength, MinLength, IsString } from 'class-validator';
+import { NAME_LENGTH, PASSWORD_LENGTH } from '../index.js';
 
 const CreateUserValidationMessage = {
   name: {
@@ -20,8 +21,8 @@ const CreateUserValidationMessage = {
 
 export class CreateUserDto {
   @IsString({message: CreateUserValidationMessage.name.invalidFormat})
-  @MinLength(1, {message: CreateUserValidationMessage.name.minLength})
-  @MaxLength(15, {message: CreateUserValidationMessage.name.maxLength})
+  @MinLength(NAME_LENGTH.MIN, {message: CreateUserValidationMessage.name.minLength})
+  @MaxLength(NAME_LENGTH.MAX, {message: CreateUserValidationMessage.name.maxLength})
   public name: string;
 
   @IsEmail({}, {message: CreateUserValidationMessage.email.invalidFormat})
@@ -30,6 +31,6 @@ export class CreateUserDto {
   @IsEnum(UserType, { message: CreateUserValidationMessage.type.invalidFormat })
   public type: UserType;
 
-  @Length(6, 12, { message: CreateUserValidationMessage.password.invalidFormat })
+  @Length(PASSWORD_LENGTH.MIN, PASSWORD_LENGTH.MAX, { message: CreateUserValidationMessage.password.invalidFormat })
   public password: string;
 }

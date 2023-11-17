@@ -7,10 +7,7 @@ import { LoginUserDto, UserEntity, UserService } from '../user/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Config, RestSchema} from '../../libs/config/index.js';
 import { UserPasswordIncorrectException, UserNotFoundException} from './index.js';
-import { TokenPayload } from './index.js';
-
-export const JWT_ALGORITHM = 'HS256';
-export const JWT_EXPIRED = '2d';
+import { TokenPayload, JWT_ALGORITHM, JWT_EXPIRED} from './index.js';
 
 @injectable()
 export class DefaultAuthService implements AuthService {

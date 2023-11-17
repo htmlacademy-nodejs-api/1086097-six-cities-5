@@ -1,5 +1,4 @@
 export * from './component.enum.js';
-
 export type RequestParams = Record<string, unknown>;
 export type RequestBody = Record<string, unknown>;
 
@@ -13,7 +12,7 @@ export enum SortType {
   Up = 1,
 }
 
-export enum СomfortType {
+export enum ComfortType {
   BREAKFAST = 'Breakfast',
   AIR = 'Air conditioning',
   LAPTOR = 'Laptop friendly workspace',
@@ -38,12 +37,12 @@ export type User = {
   password: string;
 }
 
-export type Comment = {
-  text: string;
-  postDate: Date;
-  rating: number;
-  author: User,
-}
+// export type Comment = {
+//   text: string;
+//   postDate: Date;
+//   rating: number;
+//   author: User,
+// }
 
 export type Coords = {
   latitude: string;

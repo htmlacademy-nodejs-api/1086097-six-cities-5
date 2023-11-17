@@ -1,17 +1,24 @@
-import { CreateOfferValidationMessage, CoordinatesDto } from './index.js';
+import {
+  CreateOfferValidationMessage,
+  CoordinatesDto,
+  TITLE_LENGTH,
+  DESCRIPTION_LENGTH,
+  PRICE, ROOMS, GUESTS,
+  OFFER_IMAGES_AMOUNT,
+} from '../index.js';
 import { IsOptional, IsArray, ValidateNested, IsDateString, ArrayMinSize, ArrayMaxSize, IsEnum, IsInt, Max, MaxLength, Min, MinLength, IsString, IsBoolean} from 'class-validator';
-import {User, ApartmentType, СomfortType, Coords } from '../../types/index.js';
+import {User, ApartmentType, ComfortType, Coords } from '../../../types/index.js';
 import { Type } from 'class-transformer';
 
 export class UpdateOfferDto {
   @IsOptional()
-  @MinLength(10, {message: CreateOfferValidationMessage.title.minLength})
-  @MaxLength(100, {message: CreateOfferValidationMessage.title.maxLength})
+  @MinLength(TITLE_LENGTH.MIN, {message: CreateOfferValidationMessage.title.minLength})
+  @MaxLength(TITLE_LENGTH.MAX, {message: CreateOfferValidationMessage.title.maxLength})
   public title?: string;
 
   @IsOptional()
-  @MinLength(20, {message: CreateOfferValidationMessage.description.minLength})
-  @MaxLength(1024, {message: CreateOfferValidationMessage.description.maxLength})
+  @MinLength(DESCRIPTION_LENGTH.MIN, {message: CreateOfferValidationMessage.description.minLength})
+  @MaxLength(DESCRIPTION_LENGTH.MAX, {message: CreateOfferValidationMessage.description.maxLength})
   public description?: string;
 
   @IsOptional()
@@ -28,8 +35,8 @@ export class UpdateOfferDto {
 
   @IsOptional()
   @IsArray({message: CreateOfferValidationMessage.images.invalidFormat})
-  @ArrayMinSize(6, { message: CreateOfferValidationMessage.images.invalidSize })
-  @ArrayMaxSize(6, { message: CreateOfferValidationMessage.images.invalidSize })
+  @ArrayMinSize(OFFER_IMAGES_AMOUNT, { message: CreateOfferValidationMessage.images.invalidSize })
+  @ArrayMaxSize(OFFER_IMAGES_AMOUNT, { message: CreateOfferValidationMessage.images.invalidSize })
   public images?: string[];
 
   @IsOptional()
@@ -49,25 +56,25 @@ export class UpdateOfferDto {
 
   @IsOptional()
   @IsInt({ message: CreateOfferValidationMessage.roomCount.invalidFormat })
-  @Min(1, { message: CreateOfferValidationMessage.roomCount.minValue })
-  @Max(8, { message: CreateOfferValidationMessage.roomCount.maxValue })
+  @Min(ROOMS.MIN, { message: CreateOfferValidationMessage.roomCount.minValue })
+  @Max(ROOMS.MAX, { message: CreateOfferValidationMessage.roomCount.maxValue })
   public roomCount?: number;
 
   @IsOptional()
   @IsInt({ message: CreateOfferValidationMessage.guestsCount.invalidFormat })
-  @Min(1, { message: CreateOfferValidationMessage.guestsCount.minValue })
-  @Max(10, { message: CreateOfferValidationMessage.guestsCount.maxValue })
+  @Min(GUESTS.MIN, { message: CreateOfferValidationMessage.guestsCount.minValue })
+  @Max(GUESTS.MAX, { message: CreateOfferValidationMessage.guestsCount.maxValue })
   public guestsCount?: number;
 
   @IsOptional()
   @IsInt({ message: CreateOfferValidationMessage.cost.invalidFormat })
-  @Min(100, { message: CreateOfferValidationMessage.cost.minValue })
-  @Max(100000, { message: CreateOfferValidationMessage.cost.maxValue })
+  @Min(PRICE.MIN, { message: CreateOfferValidationMessage.cost.minValue })
+  @Max(PRICE.MAX, { message: CreateOfferValidationMessage.cost.maxValue })
   public cost?: number;
 
   @IsOptional()
   @IsArray({message: CreateOfferValidationMessage.comfortType.invalidFormat})
-  @IsEnum(СomfortType, {each: true, message: CreateOfferValidationMessage.comfortType.invalid})
+  @IsEnum(ComfortType, {each: true, message: CreateOfferValidationMessage.comfortType.invalid})
   public comfort?: string[];
 
   @IsOptional()

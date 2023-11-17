@@ -1,4 +1,5 @@
 import { Length, IsEmail, IsString} from 'class-validator';
+import { PASSWORD_LENGTH } from '../index.js';
 
 const CreateUserValidationMessage = {
   email: {
@@ -14,6 +15,6 @@ export class LoginUserDto {
   public email: string;
 
   @IsString()
-  @Length(6, 12, { message: CreateUserValidationMessage.password.invalidFormat })
+  @Length(PASSWORD_LENGTH.MIN, PASSWORD_LENGTH.MAX, { message: CreateUserValidationMessage.password.invalidFormat })
   public password: string;
 }
