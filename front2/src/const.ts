@@ -42,6 +42,7 @@ export enum AppRoute {
 }
 
 export enum ApiRoute {
+  Root = '/',
   Offers = '/offers',
   Login = '/users/login',
   Logout = '/users/logout',
@@ -79,6 +80,7 @@ export enum StoreSlice {
 export enum HttpCode {
   NotFound = 404,
   NoAuth = 401,
+  Created = 201,
 }
 
 export enum SubmitStatus {

@@ -23,10 +23,10 @@ POST http://localhost:5000/users/register HTTP/1.1
 Content-Type: application/json
 
 {
-  "name": "krrraaab",
-  "mail": "krrraaaba@ya.net",
-  "userType": "pro",
-  "password": "123fffff"
+  "name": "Nikola",
+  "email": "nik@ya.net",
+  "type": "pro",
+  "password": "123456"
 }
 ###
 
@@ -35,19 +35,19 @@ POST http://localhost:5000/users/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "mail": "nick@ya.net",
-  "password": "123fffff"
+  "email": "nik@ya.net",
+  "password": "123456"
 }
 ###
 
 ## Проверка пользователя
 GET http://localhost:5000/users HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6IiIsInVzZXJUeXBlIjoicHJvIiwiaWQiOiI2NTRhM2Y5NWE3NTM3YjZiNTAyMTI0NTUiLCJpYXQiOjE2OTk1MjM2MDAsImV4cCI6MTY5OTY5NjQwMH0.5AZ_xNFaNJduDq8aNC0xPublp8ih2AinL3fC_T5nocc
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im5pa0B5YS5uZXQiLCJuYW1lIjoiTmlrb2xhIiwiYXZhdGFyIjoiZGVmYXVsdC1hdmF0YXIuc3ZnIiwidHlwZSI6InBybyIsImlkIjoiNjU1OWU5M2U4ODU2NTI0YWY2Njk5ZTdkIiwiaWF0IjoxNzAwMzkxMjU0LCJleHAiOjE3MDA1NjQwNTR9.mk2RIiJjtyo9PdlLxV3J_dNKyOsD16DRjYdig8tsK74
 ###
 
 ## Отправить изображение на аватар
 POST http://localhost:5000/users/avatar HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmFkYUB5YS5uZXQiLCJuYW1lIjoiTmFkb21hbiIsImF2YXRhciI6ImRlZmF1bHQtYXZhdGFyLmpwZyIsInVzZXJUeXBlIjoicHJvIiwiaWQiOiI2NTRmYmQ3YjliYjFhZDc3ZWUzMDMzM2UiLCJpYXQiOjE2OTk3NDI1MDcsImV4cCI6MTY5OTkxNTMwN30.Rx0Pf5DJmpo0NZ0JDCiyjXC43AxYg9PrdDm7GR1Xqys
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im5pa0B5YS5uZXQiLCJuYW1lIjoiTmlrb2xhIiwiYXZhdGFyIjoiZGVmYXVsdC1hdmF0YXIuc3ZnIiwidHlwZSI6InBybyIsImlkIjoiNjU1OWU5M2U4ODU2NTI0YWY2Njk5ZTdkIiwiaWF0IjoxNzAwMzkxMjU0LCJleHAiOjE3MDA1NjQwNTR9.mk2RIiJjtyo9PdlLxV3J_dNKyOsD16DRjYdig8tsK74
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
@@ -78,15 +78,15 @@ GET http://localhost:5000/offers/premium/Paris?limit=7 HTTP/1.1
 
 ## Создание предложения
 POST http://localhost:5000/offers HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmFkYUB5YS5uZXQiLCJuYW1lIjoiTmFkb21hbiIsImF2YXRhciI6ImRlZmF1bHQtYXZhdGFyLmpwZyIsInVzZXJUeXBlIjoicHJvIiwiaWQiOiI2NTRmYmQ3YjliYjFhZDc3ZWUzMDMzM2UiLCJpYXQiOjE2OTk3NDI1MDcsImV4cCI6MTY5OTkxNTMwN30.Rx0Pf5DJmpo0NZ0JDCiyjXC43AxYg9PrdDm7GR1Xqys
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im5pa0B5YS5uZXQiLCJuYW1lIjoiTmlrb2xhIiwiYXZhdGFyIjoiZGVmYXVsdC1hdmF0YXIuc3ZnIiwidHlwZSI6InBybyIsImlkIjoiNjU1OWU5M2U4ODU2NTI0YWY2Njk5ZTdkIiwiaWF0IjoxNzAwMzkxMjU0LCJleHAiOjE3MDA1NjQwNTR9.mk2RIiJjtyo9PdlLxV3J_dNKyOsD16DRjYdig8tsK74
 Content-Type: application/json
 
 {
     "title": "Raaaaaaaaaaaaaaaaaaaa kaaaaaaaa buuuuum",
-    "description": "The Flying Pig Downtown Hostel. The Flying Pig Downtown Hostel",
+    "description": "The Flying Pig Downtown Hostel",
     "postDate": "2023-10-11T20:08:59.937Z",
-    "city": "Amsterdam",
-    "imagePreview": "amsterdam.jpg",
+    "city": "Paris",
+    "imagePreview": "Paris.jpg",
     "images": ["amsterdam.jpg", "amsterdam.jpg", "amsterdam.jpg", "amsterdam.jpg", "amsterdam.jpg", "amsterdam.jpg"],
     "premium": false,
     "favourite": false,
@@ -105,8 +105,8 @@ Content-Type: application/json
 ###
 
 ## Обновление предложения
-PATCH http://localhost:5000/offers/654393628639cd2060ff00ca HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmlja0B5YS5uZXQiLCJuYW1lIjoiTmlja29sYSIsImF2YXRhciI6IiIsInVzZXJUeXBlIjoicHJvIiwiaWQiOiI2NTRhM2Y5NWE3NTM3YjZiNTAyMTI0NTUiLCJpYXQiOjE2OTk1MjM2MDAsImV4cCI6MTY5OTY5NjQwMH0.5AZ_xNFaNJduDq8aNC0xPublp8ih2AinL3fC_T5nocc
+PATCH http://localhost:5000/offers/6559ea22f0f573cebda25a72 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im5pa0B5YS5uZXQiLCJuYW1lIjoiTmlrb2xhIiwiYXZhdGFyIjoiZGVmYXVsdC1hdmF0YXIuc3ZnIiwidHlwZSI6InBybyIsImlkIjoiNjU1OWU5M2U4ODU2NTI0YWY2Njk5ZTdkIiwiaWF0IjoxNzAwMzkxMjU0LCJleHAiOjE3MDA1NjQwNTR9.mk2RIiJjtyo9PdlLxV3J_dNKyOsD16DRjYdig8tsK74
 Content-Type: application/json
 
 {
@@ -179,8 +179,8 @@ Content-Type: image/jpeg
 ###
 
 ## Отправить изображение-первью для предложения
-POST http://localhost:5000/offers/654393628639cd2060ff00ca/preview HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRrMDAwQHlhbmRleC5ydSIsIm5hbWUiOiJOaWtvbGF5IiwiYXZhdGFyIjoiZGVmYXVsdC1hdmF0YXIuanBnIiwidHlwZSI6InBybyIsImlkIjoiNjU1MjcwNGE1MTZhMDczMGFhYTFhMjBlIiwiaWF0IjoxNzAwMjQ5NzQwLCJleHAiOjE3MDA0MjI1NDB9.kBaFcNP_jQF4tkAE65GFeUruDs32VDBmQKIpvcxC9Z4
+POST http://localhost:5000/offers/6559ea22f0f573cebda25a72/preview HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Im5pa0B5YS5uZXQiLCJuYW1lIjoiTmlrb2xhIiwiYXZhdGFyIjoiZGVmYXVsdC1hdmF0YXIuc3ZnIiwidHlwZSI6InBybyIsImlkIjoiNjU1OWU5M2U4ODU2NTI0YWY2Njk5ZTdkIiwiaWF0IjoxNzAwMzkxMjU0LCJleHAiOjE3MDA1NjQwNTR9.mk2RIiJjtyo9PdlLxV3J_dNKyOsD16DRjYdig8tsK74
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
