@@ -179,15 +179,15 @@ Content-Type: image/jpeg
 ###
 
 ## Отправить изображение-первью для предложения
-POST http://localhost:5000/offers/6550954d099643a7f1b710da/preview HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJtYWlsIjoibmFkYUB5YS5uZXQiLCJuYW1lIjoiTmFkb21hbiIsImF2YXRhciI6ImRlZmF1bHQtYXZhdGFyLmpwZyIsInVzZXJUeXBlIjoicHJvIiwiaWQiOiI2NTRmYmQ3YjliYjFhZDc3ZWUzMDMzM2UiLCJpYXQiOjE2OTk3NDI1MDcsImV4cCI6MTY5OTkxNTMwN30.Rx0Pf5DJmpo0NZ0JDCiyjXC43AxYg9PrdDm7GR1Xqys
+POST http://localhost:5000/offers/654393628639cd2060ff00ca/preview HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6InRrMDAwQHlhbmRleC5ydSIsIm5hbWUiOiJOaWtvbGF5IiwiYXZhdGFyIjoiZGVmYXVsdC1hdmF0YXIuanBnIiwidHlwZSI6InBybyIsImlkIjoiNjU1MjcwNGE1MTZhMDczMGFhYTFhMjBlIiwiaWF0IjoxNzAwMjQ5NzQwLCJleHAiOjE3MDA0MjI1NDB9.kBaFcNP_jQF4tkAE65GFeUruDs32VDBmQKIpvcxC9Z4
 Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
 
 ------WebKitFormBoundary7MA4YWxkTrZu0gW
 Content-Disposition: form-data; name="imagePreview"; filename="foto.jpeg"
 Content-Type: image/jpeg
 
-< /Users/Nikolay/Desktop/foto.jpg
+< /Users/Nikolay/Desktop/foto2.jpg
 ------WebKitFormBoundary7MA4YWxkTrZu0gW--
 
 ###
