@@ -16,7 +16,7 @@ export class CreateOfferDto {
   public title: string;
 
   @MinLength(DESCRIPTION_LENGTH.MIN, {message: CreateOfferValidationMessage.description.minLength})
-  @MaxLength(DESCRIPTION_LENGTH.MIN, {message: CreateOfferValidationMessage.description.maxLength})
+  @MaxLength(DESCRIPTION_LENGTH.MAX, {message: CreateOfferValidationMessage.description.maxLength})
   public description: string;
 
   @IsDateString({}, {message: CreateOfferValidationMessage.postDate.invalidFormat})

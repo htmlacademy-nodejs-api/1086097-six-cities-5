@@ -79,6 +79,14 @@ export const adaptOfferPreviewToClient = (offer: OfferPreviewDto): OfferPreview 
 
 export const adaptOffersToClient = (offers: OfferDto[]): Offer[] => offers.map((offer) => adaptOfferToClient(offer));
 
+export const adaptAvatarToServer =
+  (file: File) => {
+    const formData = new FormData();
+    formData.set('avatar', file);
+
+    return formData;
+  };
+
 export enum ApartmentType {
   APARTMENT = 'apartment',
   HOUSE = 'house',

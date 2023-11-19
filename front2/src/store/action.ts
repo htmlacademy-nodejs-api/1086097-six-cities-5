@@ -4,7 +4,7 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { UserAuth, User, Offer, Comment, CommentAuth, FavoriteAuth, UserRegister, NewOffer } from '../types/types';
 import { OfferDto } from '../dto/offer/offer.dto';
 import { ApiRoute, AppRoute, HttpCode } from '../const';
-import { Token, adaptOffersToClient, adaptOfferToClient } from '../utils';
+import { Token, adaptOffersToClient, adaptOfferToClient, adaptAvatarToServer } from '../utils';
 // import { Token } from '../utils';
 type Extra = {
   api: AxiosInstance;
@@ -57,10 +57,8 @@ export const fetchOffer = createAsyncThunk<Offer, Offer['id'], { extra: Extra }>
       const { data } = await api.get<OfferDto>(`${ApiRoute.Offers}/${id}`);
       // eslint-disable-next-line no-console
       console.log(data);
-      // eslint-disable-next-line no-console
-      console.log(adaptOfferToClient(data));
-      return adaptOfferToClient(data);
 
+      return adaptOfferToClient(data);
     } catch (error) {
       const axiosError = error as AxiosError;
 
@@ -162,22 +160,25 @@ export const logoutUser = createAsyncThunk<void, undefined, { extra: Extra }>(
 
 export const registerUser = createAsyncThunk<void, UserRegister, { extra: Extra }>(
   Action.REGISTER_USER,
-  async ({ email, password, name, avatar, type }, { extra }) => {
+  async ({ email, password, name, avatar, type }, { dispatch, extra }) => {
     const { api, history } = extra;
-    const { data } = await api.post<{ id: string }>(ApiRoute.Register, {
+    const { status } = await api.post<{ id: string }>(ApiRoute.Register, {
       email,
       password,
       name,
       type,
     });
-    if (avatar) {
-      const payload = new FormData();
-      payload.append('avatar', avatar);
-      await api.post(`/${data.id}${ApiRoute.Avatar}`, payload, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+    if (status === HttpCode.Created) {
+      const action = await dispatch(loginUser({ email, password }));
+
+      if (action.type === loginUser.fulfilled.type && avatar) {
+        await api.post(`${ApiRoute.Avatar}`, adaptAvatarToServer(avatar), {
+          headers: { 'Content-Type': 'multipart/form-data', }
+        });
+        await dispatch(fetchUserStatus());
+      }
     }
-    history.push(AppRoute.Login);
+    history.push(AppRoute.Root);
   });
 
 
